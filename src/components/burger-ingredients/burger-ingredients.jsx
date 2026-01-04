@@ -1,27 +1,15 @@
 import { ConstructorElement, Tab } from '@ya.praktikum/react-developer-burger-ui-components'
-import React from 'react';
-import styles from './burger-ingridients.module.css'
+import React,{useState} from 'react';
+import styles from './burger-ingredients.module.css'
 import BurgerIngredient from './burger-ingredient/burger-ingredient';
+import PropTypes from 'prop-types';
 
-class BurgerIngridients extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      current: 'bun'
-    };
-  }
+function BurgerIngridients ({data}) {
 
-  setCurrent = (value) =>{
-    this.setState({current: value}); 
-  }
-  
- render(){
-  const {current} = this.state;
-  const {data} = this.props;
+  const [selectedTab, setSelectedTab] = useState('bun')
   const buns = data.filter(item => item.type === 'bun');
   const sauce = data.filter(item => item.type === 'sauce');
   const toppings = data.filter(item => item.type === 'main');
-
 
   return (
     <div className={`${styles.container}`}>
@@ -29,17 +17,17 @@ class BurgerIngridients extends React.Component {
         Соберите бургер
       </h1>
       <div className={`${styles.tab}`}>
-        <Tab value="bun" active={current === 'bun'} onClick={() => this.setCurrent('bun')}>
+        <Tab value="bun" active={selectedTab === 'bun'} onClick={() => setSelectedTab('bun')}>
           Булки
         </Tab>
-        <Tab value="sauce" active={current === 'sauce'} onClick={() => this.setCurrent('sauce')}>
+        <Tab value="sauce" active={selectedTab === 'sauce'} onClick={() => setSelectedTab('sauce')}>
           Соус
         </Tab>
-        <Tab value="toppings" active={current === 'toppings'} onClick={() => this.setCurrent('toppings')}>
+        <Tab value="toppings" active={selectedTab === 'toppings'} onClick={() => setSelectedTab('toppings')}>
           Начинки
         </Tab>
       </div>
-         {current == 'bun' && (
+         {selectedTab == 'bun' && (
             <section>
               <h2 className="text text_type_main-medium">
                 Булки
@@ -56,7 +44,7 @@ class BurgerIngridients extends React.Component {
               
             </section>
           )}
-          { current === 'sauce' && (
+          { selectedTab === 'sauce' && (
             <section className={styles.section}>
               <h2 className="text text_type_main-medium">
                 Соусы
@@ -72,7 +60,7 @@ class BurgerIngridients extends React.Component {
               
             </section>
           )}
-          { current === 'toppings' && (
+          { selectedTab === 'toppings' && (
             <section className={styles.section} >
               <h2 className="text text_type_main-medium">
                 Начинки
@@ -90,7 +78,19 @@ class BurgerIngridients extends React.Component {
           )}
     </div>
   );
+
 }
+
+BurgerIngridients.prototype = {
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        image: PropTypes.string.isRequired,
+    })
+    )
 }
 
 export default BurgerIngridients;

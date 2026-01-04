@@ -2,10 +2,8 @@ import { Logo, BurgerIcon,ListIcon,ProfileIcon } from '@ya.praktikum/react-devel
 import Header  from './header.module.css'
 import Nav from '../navMenu/navItem.module.css'
 import NavItem from '../navMenu/navItem';
-import React from 'react';
 
-class AppHeader extends React.Component {
-    render() {
+function AppHeader () {
         return (
             <header className={`${Header.headerContainer} p-4`}>
                 <Logo className = {Header.headerlogo}/>
@@ -29,8 +27,6 @@ class AppHeader extends React.Component {
                 </nav>
             </header>
         );
-      }
   }
-
 
 export default AppHeader;

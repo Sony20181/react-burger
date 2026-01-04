@@ -1,27 +1,11 @@
 import { CurrencyIcon, Button, ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components'
-import React from 'react';
 import styles from './burger-constructor.module.css'
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 
-interface BurgerConstructorProps {
-    data: Array<{
-        _id: string;
-        name: string;
-        type: string;
-        price: number;
-        image: string;
-    }>;
-}
+function BurgerConstructor ({data}) {
 
-class BurgerConstructor extends React.Component<BurgerConstructorProps> {
-   
-    constructor(props: BurgerConstructorProps) {
-        super(props);
-    }
-
-    render(){
-        console.log('Данные при рендере:', this.props.data);
+    console.log('Данные при рендере:', data);
         return (
             <div className={`${styles.container}`}>
                 <div className={`${styles.containerBurger}`}>
@@ -106,7 +90,18 @@ class BurgerConstructor extends React.Component<BurgerConstructorProps> {
                 </div>
             </div>
         );
-    }
+}
+
+BurgerConstructor.prototype = {
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        image: PropTypes.string.isRequired,
+    })
+    ).isRequired
 }
 
 export default BurgerConstructor;
