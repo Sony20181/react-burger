@@ -1,0 +1,51 @@
+
+.ingredientCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 272px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ingredientCard:hover {
+  transform: translateY(-4px);
+}
+
+.imageContainer {
+  position: relative;
+  width: 240px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.counter {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px; 
+}
+
+.price {
+ user-select: none;
+}
+
+.name {
+  min-height: 48px;
+  text-align: center;
+  user-select: none;
+}
