@@ -1,13 +1,21 @@
 import { CurrencyIcon, Button, ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components'
 import styles from './burger-constructor.module.css'
 import PropTypes from 'prop-types';
+import Modal from '../modalWindow/modal';
+import OrderDetails from '../modalWindow/orderDetails';
 
 
-function BurgerConstructor ({data}) {
+function BurgerConstructor ({isOpenModal,closeModal,openModal,numberOrder,data}) {
+
+    const modalOrderDetails = (
+    <Modal onClose={closeModal}>
+        <OrderDetails numberOrder={numberOrder}></OrderDetails>
+    </Modal>);
 
     console.log('Данные при рендере:', data);
         return (
             <div className={`${styles.container}`}>
+                {isOpenModal && modalOrderDetails}
                 <div className={`${styles.containerBurger}`}>
                     <ConstructorElement
                         type="top"
@@ -84,7 +92,7 @@ function BurgerConstructor ({data}) {
                         <p className="text text_type_digits-medium">600</p>
                         <CurrencyIcon type="primary" />
                     </div>
-                    <Button htmlType="button" type="primary" size="medium">
+                    <Button htmlType="button" type="primary" size="medium" onClick={()=> openModal('034536')}>
                         Оформить заказ
                     </Button>
                 </div>

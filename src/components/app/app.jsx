@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './app.css';
 //import data from '../../utils/data';
 import BurgerIngridients from '../burger-ingredients/burger-ingredients'
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import AppHeader from '../header/header';
-import Modal from '../modalWindow/modal';
 
 function App() {
 
@@ -14,13 +13,30 @@ function App() {
     error: null
   })
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isIngredientModalOpen, setIsIngredientModalOpen] = useState(false);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+  const [numberOrder, setNumberOrder] = useState(null);
 
-  function openModal(){
-    setIsOpenModal(true);
+  function openIngredientModal(ingredient) {
+    setSelectedIngredient(ingredient);
+    setIsIngredientModalOpen(true);
   }
-  function closeModal(){
-    setIsOpenModal(false);
+
+  function closeIngredientModal() {
+    setIsIngredientModalOpen(false);
+    setSelectedIngredient(null);
+  }
+
+  function openOrderModal(numOrder) {
+    setIsOrderModalOpen(true);
+    setNumberOrder(numOrder);
+
+  }
+
+  function closeOrderModal() {
+    setIsOrderModalOpen(false);
+    setNumberOrder(null);
   }
 
   useEffect(()=>{
@@ -45,11 +61,6 @@ function App() {
 
     getProductData();
   },[])
-
-  const modal = (
-  <Modal onClose={closeModal}>
-    <div>Содержимое</div>
-  </Modal>);
 
   if (data.loading){
     return (
@@ -80,17 +91,12 @@ function App() {
       <AppHeader/>
       <main className="main">
         <section className="sectionBurgerIngridients">
-         <BurgerIngridients data = {data.productData}/>
+         <BurgerIngridients isOpenModal = {isIngredientModalOpen} closeModal = {closeIngredientModal} openModal={openIngredientModal} selectedIngredient={selectedIngredient} data = {data.productData}/>
         </section>
         <section className="sectionBurgerConstructor p-4" >
-          <BurgerConstructor data={data.productData}/>
+          <BurgerConstructor isOpenModal = {isOrderModalOpen} closeModal = {closeOrderModal} openModal={openOrderModal} numberOrder = {numberOrder} data={data.productData}/>
         </section>
-      </main>
-      <div style={{overflow: 'hidden'}}>
-          <button onClick={openModal}>Открыть модальное окно</button>
-          {isOpenModal && modal }
-      </div>
-      
+      </main>      
     </div>
   );
 }

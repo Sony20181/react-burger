@@ -2,11 +2,11 @@ import { Counter, CurrencyIcon} from '@ya.praktikum/react-developer-burger-ui-co
 import styles from './burger-ingredient.module.css'
 import PropTypes from "prop-types";
 
-function BurgerIngredient ({item}) {
+function BurgerIngredient ({item,openModal}) {
 
     if (!item) return null;
     return(
-        <div className={styles.ingredientCard}>
+        <div className={styles.ingredientCard} onClick={()=>openModal()}>
             <div className={styles.imageContainer}>
                 <Counter count={1} size="default" extraClass={`${styles.counter} m-1`} />
                 <img src={item.image} alt={item.name} className={styles.image}/>
