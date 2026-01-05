@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import NavItemBlock from './navItem.module.css'
 import PropTypes from 'prop-types';
  

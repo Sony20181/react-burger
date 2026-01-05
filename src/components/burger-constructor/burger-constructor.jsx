@@ -100,16 +100,19 @@ function BurgerConstructor ({isOpenModal,closeModal,openModal,numberOrder,data})
         );
 }
 
-BurgerConstructor.prototype = {
+BurgerConstructor.propTypes = {
+    isOpenModal: PropTypes.bool,
+    closeModal: PropTypes.func.isRequired,
+    openModal: PropTypes.func.isRequired,
+    numberOrder: PropTypes.string,
     data: PropTypes.arrayOf(
         PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-        image: PropTypes.string.isRequired,
-    })
+            _id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            type: PropTypes.string.isRequired,
+            price: PropTypes.number.isRequired,
+            image: PropTypes.string.isRequired,
+        })
     ).isRequired
-}
-
+};
 export default BurgerConstructor;
