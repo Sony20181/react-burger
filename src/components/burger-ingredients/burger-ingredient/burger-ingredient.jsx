@@ -22,17 +22,17 @@ function BurgerIngredient ({item,openModal}) {
     );
 }
 
-BurgerIngredient.prototype = {
-item: PropTypes.arrayOf(
-    PropTypes.shape({
-          _id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-        image: PropTypes.string.isRequired,
-        image_mobile:PropTypes.string.isRequired,
-        image_large:PropTypes.string.isRequired,
-    })
-).isRequired
+BurgerIngredient.propTypes = {
+    openModal: PropTypes.func.isRequired,
+    item:PropTypes.shape({
+            _id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            price: PropTypes.number.isRequired,
+            image: PropTypes.string.isRequired,
+            image_mobile:PropTypes.string.isRequired,
+            image_large:PropTypes.string.isRequired,
+        }).isRequired
+
 }
 
 

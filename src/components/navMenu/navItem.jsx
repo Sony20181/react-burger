@@ -10,7 +10,7 @@ function NavItem ({icon, text}) {
     );
 }
 
-NavItem.prototype = {
+NavItem.propTypes  = {
   icon: PropTypes.node.isRequired,
   text: PropTypes.string.isRequired,
 }

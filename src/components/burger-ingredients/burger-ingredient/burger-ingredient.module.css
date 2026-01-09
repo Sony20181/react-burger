@@ -49,3 +49,23 @@
   text-align: center;
   user-select: none;
 }
+
+/*new*/
+
+.ingredientCard {
+    width: 100%; /* На мобилках занимает всю ширину */
+    max-width: 272px; /* Но не больше оригинала */
+    margin: 0 auto;
+}
+
+.imageContainer {
+    width: 100%;
+    max-width: 240px;
+    height: 100px; /* Немного уменьшаем высоту */
+}
+
+@media (min-width: 480px) {
+    .imageContainer {
+        height: 120px; /* Возвращаем оригинальную высоту */
+    }
+}

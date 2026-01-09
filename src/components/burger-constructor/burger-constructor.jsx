@@ -12,84 +12,68 @@ function BurgerConstructor ({isOpenModal,closeModal,openModal,numberOrder,data})
         <OrderDetails numberOrder={numberOrder}></OrderDetails>
     </Modal>);
 
-    console.log('Данные при рендере:', data);
+    // временные данные для конструктора
+    const buns = data.filter(item => item.type === 'bun');
+    const toppings = data.filter(item => item.type !== 'bun');
+
+    // одинаковые булочки
+    const topBun = buns.length > 0 ? buns[0] : null;
+    const bottomBun = buns.length > 0 ? buns[0] : null; 
+
+    // начинка
+    const ingredients = [
+        toppings[0],
+        toppings[1],
+        toppings[2],
+        toppings[3],
+    ];
+
+    const totalPrice = topBun.price * 2 + ingredients.reduce((sum,item) => sum + item.price, 0)
+
         return (
             <div className={`${styles.container}`}>
                 {isOpenModal && modalOrderDetails}
                 <div className={`${styles.containerBurger}`}>
-                    <ConstructorElement
-                        type="top"
-                        isLocked={true}
-                        text="Краторная булка N-200i (верх)"
-                        price={200}
-                        thumbnail="https://code.s3.yandex.net/react/code/bun-02.png"
-                    />
+                    {topBun && (
+                        <ConstructorElement
+                            type="top"
+                            isLocked={true}
+                            text={`${topBun.name} (верх)`}
+                            price={topBun.price}
+                            thumbnail={topBun.image}
+                        />
+                    )}
+                    
                     <div className={`${styles.containerTopping}`}>
-                        <ConstructorElement
-                            text="Говяжий метеорит (отбивная)"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/meat-04.png"
-                        />
-                        <ConstructorElement
-                            text="Биокотлета из марсианской Магнолии"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/meat-01.png"
-                        />
-                        <ConstructorElement
-                            text="Соус Spicy-X"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/sauce-02.png"
-                        />
-                        <ConstructorElement
-                            text="Хрустящие минеральные кольца"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/mineral_rings.png"
-                        />
-                        <ConstructorElement
-                            text="Соус Spicy-X"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/sauce-02.png"
-                        />
-                        <ConstructorElement
-                            text="Хрустящие минеральные кольца"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/mineral_rings.png"
-                        />
-                        <ConstructorElement
-                            text="Соус Spicy-X"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/sauce-02.png"
-                        />
-                        <ConstructorElement
-                            text="Хрустящие минеральные кольца"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/mineral_rings.png"
-                        />
-                        <ConstructorElement
-                            text="Соус Spicy-X"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/sauce-02.png"
-                        />
-                        <ConstructorElement
-                            text="Хрустящие минеральные кольца"
-                            price={50}
-                            thumbnail="https://code.s3.yandex.net/react/code/mineral_rings.png"
-                        />
+                        {
+                            ingredients.length > 0 && (
+                                ingredients.map((item,index)=>(
+                                    <ConstructorElement
+                                        key = {`${item._id}-${index}`}
+                                        text = {`${item.name}`}
+                                        price = {`${item.price}`}
+                                        thumbnail=  {`${item.image}`}
+                                    />
+                                ))
+                            )
+                        }
+                        
                         
                     </div>
-                    <ConstructorElement
+                    {bottomBun && (
+                        <ConstructorElement
                             type="bottom"
                             isLocked={true}
-                            text="Краторная булка N-200i (низ)"
-                            price={200}
-                            thumbnail="https://code.s3.yandex.net/react/code/bun-02.png"
+                            text={`${bottomBun.name} (низ)`}
+                            price={bottomBun.price}
+                            thumbnail={bottomBun.image}
                         />
-                    
+                    )} 
                 </div>
         
                 <div className={`${styles.footer}`}>
                     <div className={`${styles.footerPrice}`}>
-                        <p className="text text_type_digits-medium">600</p>
+                        <p className="text text_type_digits-medium">{totalPrice}</p>
                         <CurrencyIcon type="primary" />
                     </div>
                     <Button htmlType="button" type="primary" size="medium" onClick={()=> openModal('034536')}>

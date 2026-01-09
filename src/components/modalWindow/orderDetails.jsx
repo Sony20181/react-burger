@@ -1,8 +1,9 @@
 import styles from './modal.module.css'
 import orderDone from '../../images/orderDone.svg'
+import PropTypes from 'prop-types'
 
 //C:\Users\sofya.kharinova\react-burger\src\images\orderDone.svg
-function OrderDetails({numberOrder = '034536'}){
+function OrderDetails({numberOrder}){
 console.log(numberOrder,"numberOrder")
 return (
     <div className ={styles.orderDetails} >
@@ -23,6 +24,10 @@ return (
         </p>
     </div>
 )
+}
+
+OrderDetails.propTypes = {
+    numberOrder: PropTypes.string.isRequired,
 }
 
 export default OrderDetails;

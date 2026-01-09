@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Modal from '../modalWindow/modal';
 import IngredientDetails from '../modalWindow/ingredientDetails';
 
-function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient,data}) {
+function BurgerIngredients ({isOpenModal,closeModal,openModal,selectedIngredient,data}) {
 
   const [selectedTab, setSelectedTab] = useState('bun')
   const buns = data.filter(item => item.type === 'bun');
@@ -18,19 +18,19 @@ function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient
   </Modal>);
 
   return (
-    <div className={`${styles.container}`}>
+    <div className={`${styles.container} pt-10`}>
       {isOpenModal && modalIngredientDetails }
       <h1 className="text text_type_main-large">
         Соберите бургер
       </h1>
-      <div className={`${styles.tab}`}>
+      <div className={`${styles.tab} pt-5 pb-10`}>
         <Tab value="bun" active={selectedTab === 'bun'} onClick={() => setSelectedTab('bun')}>
           Булки
         </Tab>
         <Tab value="sauce" active={selectedTab === 'sauce'} onClick={() => setSelectedTab('sauce')}>
           Соус
         </Tab>
-        <Tab value="toppings" active={selectedTab === 'toppings'} onClick={() => setSelectedTab('toppings')}>
+        <Tab value="main" active={selectedTab === 'main'} onClick={() => setSelectedTab('main')}>
           Начинки
         </Tab>
       </div>
@@ -39,7 +39,7 @@ function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient
               <h2 className="text text_type_main-medium">
                 Булки
               </h2>
-              <div className={styles.menu}>
+              <div className={`${styles.menu} pt-6 pb-10`}>
                 {buns.length > 0 ? (
                   buns.map(item => (
                     <BurgerIngredient key={item._id} item={item} openModal={() =>openModal(item)} />
@@ -56,7 +56,7 @@ function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient
               <h2 className="text text_type_main-medium">
                 Соусы
               </h2>
-              <div className={styles.menu}>
+              <div className={`${styles.menu} pt-6 pb-10`}>
                 {sauce.length > 0 ? (
                     sauce.map(item => (
                       <BurgerIngredient key = {item._id} item= {item} openModal={() =>openModal(item)}/> 
@@ -67,18 +67,18 @@ function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient
               
             </section>
           )}
-          { selectedTab === 'toppings' && (
+          { selectedTab === 'main' && (
             <section className={styles.section} >
               <h2 className="text text_type_main-medium">
                 Начинки
               </h2>
-              <div className={styles.menu}>
+              <div className={`${styles.menu} pt-6 pb-10`}>
                 {toppings.length > 0 ? (
                     toppings.map(item => (
                       <BurgerIngredient key = {item._id} item= {item} openModal={() =>openModal(item)}/> 
                     )) 
                   ) : (<p>Начинка закончилась.</p>)
-                }\
+                }
               </div>
               
             </section>
@@ -88,7 +88,11 @@ function BurgerIngridients ({isOpenModal,closeModal,openModal,selectedIngredient
 
 }
 
-BurgerIngridients.prototype = {
+BurgerIngredients.propTypes = {
+    isOpenModal: PropTypes.bool,
+    closeModal: PropTypes.func.isRequired,
+    openModal: PropTypes.func.isRequired,
+    selectedIngredient: PropTypes.object,
     data: PropTypes.arrayOf(
         PropTypes.shape({
         _id: PropTypes.string.isRequired,
@@ -100,4 +104,4 @@ BurgerIngridients.prototype = {
     )
 }
 
-export default BurgerIngridients;
+export default BurgerIngredients;
