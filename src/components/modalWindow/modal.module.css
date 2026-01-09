@@ -25,12 +25,11 @@
   overflow-y: auto;
   overflow: clip;
   box-shadow: 0px 24px 32px rgba(0, 0, 0, 0.04),
-              0px 16px 24px rgba(0, 0, 0, 0.04),
-              0px 4px 8px rgba(0, 0, 0, 0.04),
-              0px 0px 1px rgba(0, 0, 0, 0.04);
+    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04),
+    0px 0px 1px rgba(0, 0, 0, 0.04);
 }
 
-.header{
+.header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -39,11 +38,11 @@
   align-items: center;
 }
 
-.headerWithoutTitle{
-   justify-content: flex-end;
+.headerWithoutTitle {
+  justify-content: flex-end;
 }
 
-.closeButton{
+.closeButton {
   display: flex;
   align-items: center;
   background: none;
@@ -51,7 +50,7 @@
   cursor: pointer;
 }
 
-.title{
+.title {
   user-select: none;
 }
 
@@ -61,22 +60,22 @@
   align-items: center;
 }
 
-.nutrients{
+.nutrients {
   display: flex;
   flex-direction: row;
-  gap:20px; 
+  gap: 20px;
 }
 
-.nutrient{
+.nutrient {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap:10px;
+  gap: 10px;
 }
 
-.orderDetails{
-      display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }

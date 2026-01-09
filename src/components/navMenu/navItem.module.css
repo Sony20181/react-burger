@@ -1,19 +1,19 @@
-.navSection{
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
+.navSection {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
 
-.navSection{
-    display: flex;
-    flex-direction: row;
-    gap:10px;
+.navSection {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
-.navItem{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap:8px;
+.navItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
