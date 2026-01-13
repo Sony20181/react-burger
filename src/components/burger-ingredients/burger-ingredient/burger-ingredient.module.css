@@ -1,4 +1,3 @@
-
 .ingredientCard {
   display: flex;
   flex-direction: column;
@@ -37,11 +36,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .price {
- user-select: none;
+  user-select: none;
 }
 
 .name {
