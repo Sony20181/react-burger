@@ -1,29 +1,90 @@
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./burger-ingredients.module.css";
 import BurgerIngredient from "./burger-ingredient/burger-ingredient";
 import PropTypes from "prop-types";
 import Modal from "../modalWindow/modal";
 import IngredientDetails from "../modalWindow/ingredientDetails";
-import { IngredientType } from "../../utils/types";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentIngredient } from "../../services/slices/ingredientDetailsSlice";
 
-function BurgerIngredients({
-  isOpenModal,
-  closeModal,
-  openModal,
-  selectedIngredient,
-  data,
-}) {
-  const [selectedTab, setSelectedTab] = useState("bun");
-  const buns = data.filter((item) => item.type === "bun");
-  const sauce = data.filter((item) => item.type === "sauce");
-  const toppings = data.filter((item) => item.type === "main");
+function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
+  const dispatch = useDispatch();
+  const { items } = useSelector((state) => state.ingredients);
+
+  const bunRef = useRef();
+  const sauceRef = useRef(null);
+  const toppingsRef = useRef(null);
+  const containerRef = useRef(null);
+
+  const [activeTabFromScroll, setActiveTabFromScroll] = useState("bun");
+  const [selectedTabByClick, setSelectedTabByClick] = useState(null);
+  const activeTab = selectedTabByClick || activeTabFromScroll;
+
+  const buns = items.filter((item) => item.type === "bun");
+  const sauce = items.filter((item) => item.type === "sauce");
+  const toppings = items.filter((item) => item.type === "main");
+  const handleTabClick = (tab) => {
+    setSelectedTabByClick(tab);
+    let elementToScroll = null;
+    if (tab === "bun") {
+      elementToScroll = bunRef.current;
+    } else if (tab === "sauce") {
+      elementToScroll = sauceRef.current;
+    } else {
+      elementToScroll = toppingsRef.current;
+    }
+    if (elementToScroll && containerRef.current) {
+      const containerTop = containerRef.current.getBoundingClientRect().top;
+      const elementTop = elementToScroll.getBoundingClientRect().top;
+      const scrollTop = containerRef.current.scrollTop;
+
+      containerRef.current.scrollTo({
+        top: scrollTop + (elementTop - containerTop),
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleIngredientClick = (ingredient) => {
+    dispatch(setCurrentIngredient(ingredient));
+    openModal();
+  };
 
   const modalIngredientDetails = (
     <Modal title="Детали ингредиента" onClose={closeModal}>
-      <IngredientDetails ingredient={selectedIngredient} />
+      <IngredientDetails />
     </Modal>
   );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const containerTop = containerRef.current.getBoundingClientRect().top;
+      const bunsPosition = bunRef.current.getBoundingClientRect().top;
+      const saucePosition = sauceRef.current.getBoundingClientRect().top;
+      const toppingsPosition = toppingsRef.current.getBoundingClientRect().top;
+
+      const distanceBuns = Math.abs(bunsPosition - containerTop);
+      const distanceSauce = Math.abs(saucePosition - containerTop);
+      const distanceToppings = Math.abs(toppingsPosition - containerTop);
+
+      const tabFromScroll =
+        distanceBuns < distanceSauce
+          ? distanceBuns < distanceToppings
+            ? "bun"
+            : "main"
+          : distanceSauce < distanceToppings
+            ? "sauce"
+            : "main";
+      setActiveTabFromScroll(tabFromScroll);
+      setSelectedTabByClick(null);
+    };
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
 
   return (
     <div className={`${styles.container} pt-10`}>
@@ -32,28 +93,28 @@ function BurgerIngredients({
       <div className={`${styles.tab} pt-5 pb-10`}>
         <Tab
           value="bun"
-          active={selectedTab === "bun"}
-          onClick={() => setSelectedTab("bun")}
+          active={activeTab === "bun"}
+          onClick={() => handleTabClick("bun")}
         >
           Булки
         </Tab>
         <Tab
           value="sauce"
-          active={selectedTab === "sauce"}
-          onClick={() => setSelectedTab("sauce")}
+          active={activeTab === "sauce"}
+          onClick={() => handleTabClick("sauce")}
         >
           Соус
         </Tab>
         <Tab
           value="main"
-          active={selectedTab === "main"}
-          onClick={() => setSelectedTab("main")}
+          active={activeTab === "main"}
+          onClick={() => handleTabClick("main")}
         >
           Начинки
         </Tab>
       </div>
-      {selectedTab === "bun" && (
-        <section>
+      <div ref={containerRef} className={`${styles.allIngredientsContainer} `}>
+        <section ref={bunRef}>
           <h2 className="text text_type_main-medium">Булки</h2>
           <div className={`${styles.menu} pt-6 pb-10`}>
             {buns.length > 0 ? (
@@ -61,7 +122,7 @@ function BurgerIngredients({
                 <BurgerIngredient
                   key={item._id}
                   item={item}
-                  openModal={() => openModal(item)}
+                  openModal={() => handleIngredientClick(item)}
                 />
               ))
             ) : (
@@ -69,9 +130,8 @@ function BurgerIngredients({
             )}
           </div>
         </section>
-      )}
-      {selectedTab === "sauce" && (
-        <section className={styles.section}>
+
+        <section ref={sauceRef} className={styles.section}>
           <h2 className="text text_type_main-medium">Соусы</h2>
           <div className={`${styles.menu} pt-6 pb-10`}>
             {sauce.length > 0 ? (
@@ -79,7 +139,7 @@ function BurgerIngredients({
                 <BurgerIngredient
                   key={item._id}
                   item={item}
-                  openModal={() => openModal(item)}
+                  openModal={() => handleIngredientClick(item)}
                 />
               ))
             ) : (
@@ -87,9 +147,8 @@ function BurgerIngredients({
             )}
           </div>
         </section>
-      )}
-      {selectedTab === "main" && (
-        <section className={styles.section}>
+
+        <section ref={toppingsRef} className={styles.section}>
           <h2 className="text text_type_main-medium">Начинки</h2>
           <div className={`${styles.menu} pt-6 pb-10`}>
             {toppings.length > 0 ? (
@@ -97,7 +156,7 @@ function BurgerIngredients({
                 <BurgerIngredient
                   key={item._id}
                   item={item}
-                  openModal={() => openModal(item)}
+                  openModal={() => handleIngredientClick(item)}
                 />
               ))
             ) : (
@@ -105,7 +164,7 @@ function BurgerIngredients({
             )}
           </div>
         </section>
-      )}
+      </div>
     </div>
   );
 }
@@ -114,8 +173,6 @@ BurgerIngredients.propTypes = {
   isOpenModal: PropTypes.bool,
   closeModal: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
-  selectedIngredient: PropTypes.object,
-  data: PropTypes.arrayOf(IngredientType).isRequired,
 };
 
 export default BurgerIngredients;

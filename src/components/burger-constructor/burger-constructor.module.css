@@ -21,17 +21,9 @@
 
 .containerTopping {
   max-height: 450px;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.ingredientRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 30px;
 }
 
 .footer {

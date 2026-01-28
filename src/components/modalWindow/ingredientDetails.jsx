@@ -1,7 +1,10 @@
 import styles from "./modal.module.css";
-import { IngredientType } from "../../utils/types";
+import { useSelector } from "react-redux";
 
-function IngredientDetails({ ingredient }) {
+function IngredientDetails() {
+  const ingredient = useSelector(
+    (state) => state.ingredientDetails.currentIngredient,
+  );
   if (!ingredient) {
     return <p>Информация об ингредиенте отсутствует</p>;
   }
@@ -45,9 +48,5 @@ function IngredientDetails({ ingredient }) {
     </div>
   );
 }
-
-IngredientDetails.propTypes = {
-  ingredient: IngredientType,
-};
 
 export default IngredientDetails;
