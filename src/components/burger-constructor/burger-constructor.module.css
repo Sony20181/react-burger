@@ -22,6 +22,7 @@
 .containerTopping {
   max-height: 450px;
   width: 100%;
+  max-width: 536px;
   overflow-y: auto;
   overflow-x: hidden;
 }
