@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ORDERS_URL } from "../../utils/api";
+import { ORDERS_ENDPOINT, request } from "../../utils/api";
 
 const initialState = {
   currentOrder: null,
@@ -9,7 +9,7 @@ const initialState = {
 export const createOrder = createAsyncThunk(
   "ingredients/createOrder",
   async (ingredientIds) => {
-    const response = await fetch(ORDERS_URL, {
+    const data = await request(ORDERS_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,10 +20,6 @@ export const createOrder = createAsyncThunk(
         ingredients: ingredientIds,
       }),
     });
-    if (!response.ok) {
-      throw new Error("Ошибка при создании заказа");
-    }
-    const data = await response.json();
     return data.order;
   },
 );

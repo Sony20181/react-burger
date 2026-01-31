@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = {
   bun: null,
@@ -14,13 +14,16 @@ const constructorSlice = createSlice({
       state.bun = action.payload;
     },
     // Добавляем ингредиент
-    addIngredient: (state, action) => {
-      const ingredient = {
-        ...action.payload,
-        uuid: crypto.randomUUID(),
-      };
-
-      state.main.push(ingredient);
+    addIngredient: {
+      reducer: (state, action) => {
+        state.main.push(action.payload);
+      },
+      prepare: (ingedient) => {
+        const uuid = nanoid();
+        return {
+          payload: { ...ingedient, uuid },
+        };
+      },
     },
     // Удаляем ингредиент
     removeIngredient: (state, action) => {

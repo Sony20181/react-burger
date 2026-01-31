@@ -16,8 +16,11 @@ import { addBun, addIngredient } from "../../services/slices/constructorSlice";
 import { createOrder, clearOrder } from "../../services/slices/orderSlice";
 import DraggableConstructorItem from "./draggable-constructor-item/draggable-constructor-item";
 
+import { clearConstructor } from "../../services/slices/constructorSlice";
+
 function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.order);
   const { bun, main: ingredients } = useSelector(
     (state) => state.burgerConstructor,
   );
@@ -33,6 +36,7 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
       const result = await dispatch(createOrder(orderDetails)).unwrap();
       if (result) {
         openModal();
+        dispatch(clearConstructor());
       }
     } catch (error) {
       console.error("Ошибка создания заказа:", error);
@@ -81,18 +85,11 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
     <div
       className={`${styles.container}`}
       ref={dropTarget}
-      style={{
-        boxShadow: boxShadowStyle,
-        borderRadius: "16px",
-        padding: "8px",
-        boxSizing: "border-box",
-      }}
+      style={{ boxShadow: boxShadowStyle }}
     >
       {isOpenModal && modalOrderDetails}
       {bun === null && ingredients.length === 0 && (
-        <h2
-          style={{ display: "flex", width: "100%", justifyContent: "center" }}
-        >
+        <h2 className={styles.emptyConstructorMessage}>
           Собери свой бургер уже сейчас!
         </h2>
       )}
@@ -137,9 +134,10 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
           htmlType="button"
           type="primary"
           size="medium"
+          disabled={!bun || loading}
           onClick={() => handleOrderClick()}
         >
-          Оформить заказ
+          "Оформить заказ"
         </Button>
       </div>
     </div>

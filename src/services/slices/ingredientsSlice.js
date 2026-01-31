@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { INGREDIENTS_URL } from "../../utils/api";
+import { request, INGREDIENTS_ENDPOINT } from "../../utils/api";
 
 const initialState = {
   items: [],
@@ -10,13 +10,7 @@ const initialState = {
 export const fetchIngredients = createAsyncThunk(
   "ingredients/fetchIngredients",
   async () => {
-    const response = await fetch(INGREDIENTS_URL);
-
-    if (!response.ok) {
-      throw new Error("Ошибка при загрузке ингредиентов");
-    }
-    const data = await response.json();
-
+    const data = await request(INGREDIENTS_ENDPOINT);
     return data.data;
   },
 );

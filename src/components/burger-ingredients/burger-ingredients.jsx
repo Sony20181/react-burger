@@ -6,7 +6,10 @@ import PropTypes from "prop-types";
 import Modal from "../modalWindow/modal";
 import IngredientDetails from "../modalWindow/ingredientDetails";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentIngredient } from "../../services/slices/ingredientDetailsSlice";
+import {
+  setCurrentIngredient,
+  clearCurrentIngredient,
+} from "../../services/slices/ingredientDetailsSlice";
 
 function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
   const dispatch = useDispatch();
@@ -51,8 +54,13 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
     openModal();
   };
 
+  const handleCloseIngredientModal = () => {
+    closeModal();
+    dispatch(clearCurrentIngredient());
+  };
+
   const modalIngredientDetails = (
-    <Modal title="Детали ингредиента" onClose={closeModal}>
+    <Modal title="Детали ингредиента" onClose={handleCloseIngredientModal}>
       <IngredientDetails />
     </Modal>
   );
