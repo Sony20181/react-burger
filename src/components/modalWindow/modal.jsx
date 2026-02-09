@@ -2,15 +2,20 @@ import ReactDOM from "react-dom";
 import ModalOverlay from "./modalOverlay";
 import styles from "./modal.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
 function Modal({ title, onClose, children }) {
   const modalRoot = document.getElementById("modalWindow");
+
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
   useEffect(() => {
     function handleKeyCloseModal(e) {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
       }
     }
 
@@ -21,7 +26,7 @@ function Modal({ title, onClose, children }) {
       document.removeEventListener("keydown", handleKeyCloseModal);
       document.body.style.overflow = "unset";
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   return ReactDOM.createPortal(
     <>
@@ -35,7 +40,7 @@ function Modal({ title, onClose, children }) {
           {title && <h1 className={`${styles.title}`}>{title}</h1>}
           <button
             className={styles.closeButton}
-            onClick={onClose}
+            onClick={handleClose}
             type="button"
             aria-label="Закрыть"
           >
@@ -46,7 +51,7 @@ function Modal({ title, onClose, children }) {
       </div>
     </>,
 
-    modalRoot
+    modalRoot,
   );
 }
 

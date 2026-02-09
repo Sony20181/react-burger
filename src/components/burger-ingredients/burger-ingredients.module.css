@@ -9,13 +9,18 @@
   flex-direction: row;
   padding: 20px 0 40px 0;
 }
-
+.allIngredientsContainer {
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 .menu {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px 24px;
-  max-height: 600px;
   padding: 24px 0 40px 0;
+  /* max-height: 600px;
+  
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden;*/
 }

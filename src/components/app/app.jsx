@@ -3,66 +3,36 @@ import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
 import AppHeader from "../header/header";
 import styles from "./app.module.css";
-
-const API_URL = "https://norma.education-services.ru/api/ingredients";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchIngredients } from "../../services/slices/ingredientsSlice";
 
 function App() {
-  const [data, setData] = useState({
-    productData: null,
-    loading: true,
-    error: null,
-  });
-
+  const dispatch = useDispatch();
+  const { items, loading, error } = useSelector((state) => state.ingredients);
   const [isIngredientModalOpen, setIsIngredientModalOpen] = useState(false);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedIngredient, setSelectedIngredient] = useState(null);
-  const [numberOrder, setNumberOrder] = useState(null);
 
-  function openIngredientModal(ingredient) {
-    setSelectedIngredient(ingredient);
+  function openIngredientModal() {
     setIsIngredientModalOpen(true);
   }
 
   function closeIngredientModal() {
     setIsIngredientModalOpen(false);
-    setSelectedIngredient(null);
   }
 
-  function openOrderModal(numOrder) {
+  function openOrderModal() {
     setIsOrderModalOpen(true);
-    setNumberOrder(numOrder);
   }
 
   function closeOrderModal() {
     setIsOrderModalOpen(false);
-    setNumberOrder(null);
   }
 
   useEffect(() => {
-    const getProductData = async () => {
-      try {
-        setData((prev) => ({ ...prev, loading: true, error: null }));
-        const res = await fetch(API_URL);
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const result = await res.json();
-        setData({ productData: result.data, loading: false, error: null });
-      } catch (err) {
-        console.error("Ошибка при загрузке данных:", err);
-        setData((prev) => ({
-          ...prev,
-          loading: false,
-          error: err.message || "Ошибка при загрузке данных",
-        }));
-      }
-    };
-
-    getProductData();
-  }, []);
-
-  if (data.loading) {
+  if (loading) {
     return (
       <div className={`${styles.app}`}>
         <AppHeader />
@@ -70,7 +40,7 @@ function App() {
       </div>
     );
   }
-  if (data.error) {
+  if (error) {
     return (
       <div className={`${styles.app}`}>
         <AppHeader />
@@ -81,7 +51,7 @@ function App() {
       </div>
     );
   }
-  if (!data.productData || data.productData.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <div className={`${styles.app}`}>
         <AppHeader />
@@ -98,8 +68,6 @@ function App() {
             isOpenModal={isIngredientModalOpen}
             closeModal={closeIngredientModal}
             openModal={openIngredientModal}
-            selectedIngredient={selectedIngredient}
-            data={data.productData}
           />
         </section>
         <section className={`${styles.sectionBurgerConstructor} p-4`}>
@@ -107,8 +75,6 @@ function App() {
             isOpenModal={isOrderModalOpen}
             closeModal={closeOrderModal}
             openModal={openOrderModal}
-            numberOrder={numberOrder}
-            data={data.productData}
           />
         </section>
       </main>
