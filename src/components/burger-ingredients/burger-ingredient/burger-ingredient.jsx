@@ -3,13 +3,16 @@ import {
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
-import PropTypes from "prop-types";
 import { IngredientType } from "../../../utils/types";
 import { useSelector } from "react-redux";
 import { useDrag } from "react-dnd";
 import { DND_TYPES } from "../../../utils/dnd-types";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function BurgerIngredient({ item, openModal }) {
+function BurgerIngredient({ item }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const { bun, main } = useSelector((state) => state.burgerConstructor);
 
   // считаем кол-во ингредиентов
@@ -30,13 +33,19 @@ function BurgerIngredient({ item, openModal }) {
     }),
   });
 
+  const handleClick = () => {
+    navigate(`/ingredients/${item._id}`, {
+      state: { background: location },
+    });
+  };
+
   if (!item) return null;
 
   return (
     !isDrag && (
       <div
         className={styles.ingredientCard}
-        onClick={() => openModal()}
+        onClick={handleClick}
         ref={dragRef}
       >
         <div className={styles.imageContainer}>
@@ -63,7 +72,6 @@ function BurgerIngredient({ item, openModal }) {
 
 BurgerIngredient.propTypes = {
   item: IngredientType.isRequired,
-  openModal: PropTypes.func.isRequired,
 };
 
 export default BurgerIngredient;

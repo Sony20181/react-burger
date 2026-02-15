@@ -1,0 +1,78 @@
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import styles from "./forgot-password.module.css";
+import { Link } from "react-router-dom";
+import {
+  EmailInput,
+  Button,
+} from "@ya.praktikum/react-developer-burger-ui-components";
+import { requestPasswordForgot } from "../../services/slices/passwordResetSlice";
+
+function ForgotPasswordPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.passwordReset);
+  const [emailValue, setEmailValue] = React.useState("");
+  const onChange = (e) => {
+    setEmailValue(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!emailValue) {
+      return;
+    }
+
+    try {
+      const result = await dispatch(requestPasswordForgot(emailValue)).unwrap();
+      if (result) {
+        navigate("/reset-password");
+      }
+    } catch (error) {
+      console.error("Ошибка при запросе восстановления пароля:", error);
+    }
+  };
+
+  return (
+    <div className={`${styles.containerForgotPassword} mb-6`}>
+      <h1 className={`mb-6`}>Восстановление пароля</h1>
+      <form onSubmit={handleSubmit}>
+        <EmailInput
+          onChange={onChange}
+          value={emailValue}
+          name={"email"}
+          isIcon={false}
+          extraClass={`mb-6`}
+        />
+        {error && (
+          <p>
+            Простите, возникла непредвиденная ошибка.Попробуйте изменить пароль
+            позже
+          </p>
+        )}
+        {loading && <p>Пожалуйста,ожидайте. Идет загрузка...</p>}
+        <Button
+          htmlType="submit"
+          type="primary"
+          size="medium"
+          extraClass={`mb-20`}
+          disabled={loading || !emailValue}
+        >
+          Восстановить
+        </Button>
+      </form>
+
+      <div className={`${styles.footer}`}>
+        <p className={`text text_type_main-default`}>Вспомнили пароль?</p>
+        <Link to="/login">
+          <p className={`${styles.signInText} text text_type_main-default`}>
+            Войти
+          </p>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default ForgotPasswordPage;

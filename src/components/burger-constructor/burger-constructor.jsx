@@ -17,16 +17,23 @@ import { createOrder, clearOrder } from "../../services/slices/orderSlice";
 import DraggableConstructorItem from "./draggable-constructor-item/draggable-constructor-item";
 
 import { clearConstructor } from "../../services/slices/constructorSlice";
+import { useNavigate } from "react-router-dom";
 
 function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading } = useSelector((state) => state.order);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const { bun, main: ingredients } = useSelector(
     (state) => state.burgerConstructor,
   );
 
   const handleOrderClick = async () => {
     if (!bun || ingredients === 0) return;
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     try {
       const orderDetails = [
         bun._id,

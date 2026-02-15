@@ -2,17 +2,10 @@ import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useEffect, useRef, useState } from "react";
 import styles from "./burger-ingredients.module.css";
 import BurgerIngredient from "./burger-ingredient/burger-ingredient";
-import PropTypes from "prop-types";
-import Modal from "../modalWindow/modal";
-import IngredientDetails from "../modalWindow/ingredientDetails";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setCurrentIngredient,
-  clearCurrentIngredient,
-} from "../../services/slices/ingredientDetailsSlice";
 
-function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
-  const dispatch = useDispatch();
+import { useSelector } from "react-redux";
+
+function BurgerIngredients() {
   const { items } = useSelector((state) => state.ingredients);
 
   const bunRef = useRef();
@@ -27,6 +20,7 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
   const buns = items.filter((item) => item.type === "bun");
   const sauce = items.filter((item) => item.type === "sauce");
   const toppings = items.filter((item) => item.type === "main");
+
   const handleTabClick = (tab) => {
     setSelectedTabByClick(tab);
     let elementToScroll = null;
@@ -48,22 +42,6 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
       });
     }
   };
-
-  const handleIngredientClick = (ingredient) => {
-    dispatch(setCurrentIngredient(ingredient));
-    openModal();
-  };
-
-  const handleCloseIngredientModal = () => {
-    closeModal();
-    dispatch(clearCurrentIngredient());
-  };
-
-  const modalIngredientDetails = (
-    <Modal title="Детали ингредиента" onClose={handleCloseIngredientModal}>
-      <IngredientDetails />
-    </Modal>
-  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,7 +74,6 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
 
   return (
     <div className={`${styles.container} pt-10`}>
-      {isOpenModal && modalIngredientDetails}
       <h1 className="text text_type_main-large">Соберите бургер</h1>
       <div className={`${styles.tab} pt-5 pb-10`}>
         <Tab
@@ -127,11 +104,7 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
           <div className={`${styles.menu} pt-6 pb-10`}>
             {buns.length > 0 ? (
               buns.map((item) => (
-                <BurgerIngredient
-                  key={item._id}
-                  item={item}
-                  openModal={() => handleIngredientClick(item)}
-                />
+                <BurgerIngredient key={item._id} item={item} />
               ))
             ) : (
               <p>Булочки закончились.</p>
@@ -144,11 +117,7 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
           <div className={`${styles.menu} pt-6 pb-10`}>
             {sauce.length > 0 ? (
               sauce.map((item) => (
-                <BurgerIngredient
-                  key={item._id}
-                  item={item}
-                  openModal={() => handleIngredientClick(item)}
-                />
+                <BurgerIngredient key={item._id} item={item} />
               ))
             ) : (
               <p>Соусы закончились.</p>
@@ -161,11 +130,7 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
           <div className={`${styles.menu} pt-6 pb-10`}>
             {toppings.length > 0 ? (
               toppings.map((item) => (
-                <BurgerIngredient
-                  key={item._id}
-                  item={item}
-                  openModal={() => handleIngredientClick(item)}
-                />
+                <BurgerIngredient key={item._id} item={item} />
               ))
             ) : (
               <p>Начинка закончилась.</p>
@@ -176,11 +141,5 @@ function BurgerIngredients({ isOpenModal, closeModal, openModal }) {
     </div>
   );
 }
-
-BurgerIngredients.propTypes = {
-  isOpenModal: PropTypes.bool,
-  closeModal: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired,
-};
 
 export default BurgerIngredients;
