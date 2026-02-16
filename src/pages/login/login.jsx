@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styles from "./login.module.css";
 import { Link } from "react-router-dom";
 import {
@@ -10,34 +9,30 @@ import { loginUser } from "../../services/slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useForm } from "../../hooks/useForm";
 
 function LoginPage() {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/";
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const { values, handleChange } = useForm({
+    email: "",
+    password: "",
+  });
   const { loading, error } = useSelector((state) => state.auth);
-
-  const onEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const onPasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!values.email || !values.password) {
       return;
     }
     try {
       const result = await dispatch(
         loginUser({
-          email: email,
-          password: password,
+          email: values.email,
+          password: values.password,
         }),
       ).unwrap();
       if (result.success) {
@@ -53,15 +48,15 @@ function LoginPage() {
       <h1 className={`mb-6`}>Вход</h1>
       <form onSubmit={handleSubmit}>
         <EmailInput
-          onChange={onEmailChange}
-          value={email}
+          onChange={handleChange}
+          value={values.email}
           name={"email"}
           isIcon={false}
           extraClass={`mb-6`}
         />
         <PasswordInput
-          onChange={onPasswordChange}
-          value={password}
+          onChange={handleChange}
+          value={values.password}
           name={"password"}
           extraClass="mb-6"
         />
@@ -75,7 +70,7 @@ function LoginPage() {
           type="primary"
           size="medium"
           extraClass={`mb-20`}
-          disabled={loading || !email || !password}
+          disabled={loading || !values.email || !values.password}
         >
           Вход
         </Button>

@@ -8,41 +8,32 @@ import {
 import styles from "./profile-form.module.css";
 import { updateUser } from "../../../../services/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "../../../../hooks/useForm";
 
 function ProfileForm() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { values, handleChange, setValues } = useForm({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  const [originalName, setOriginalName] = useState("");
-  const [originalEmail, setOriginalEmail] = useState("");
+  const [originalValues, setOriginalValues] = useState({ name: "", email: "" });
   const [isFormChanged, setIsFormChanged] = useState(false);
-
-  const onChangeName = (e) => {
-    setName(e.target.value);
-  };
-  const onEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("accessToken");
     const userData = {};
-    if (name !== originalName) userData.name = name;
-    if (email !== originalEmail) userData.email = email;
-    if (password) userData.password = password;
+    if (values.name !== originalValues.name) userData.name = values.name;
+    if (values.email !== originalValues.email) userData.email = values.email;
+    if (values.password) userData.password = values.password;
     try {
       await dispatch(updateUser({ userData, accessToken })).unwrap();
-      setOriginalName(name);
-      setOriginalEmail(email);
-      setPassword("");
+      setOriginalValues({ name: values.name, email: values.email });
+      setValues({ ...values, password: "" });
       setIsFormChanged(false);
     } catch (err) {
       console.log("Ошибка обноволения данных", err);
@@ -50,31 +41,32 @@ function ProfileForm() {
   };
 
   const handleCancel = () => {
-    setName(originalName);
-    setEmail(originalEmail);
-    setPassword("");
+    setValues({ ...originalValues, password: "" });
     setIsFormChanged(false);
   };
 
   // загрузка данных
   useEffect(() => {
     if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-      setOriginalName(user.name || "");
-      setOriginalEmail(user.email || "");
+      const userValues = {
+        name: user.name || "",
+        email: user.email || "",
+        password: "",
+      };
+      setValues(userValues);
+      setOriginalValues({ name: user.name || "", email: user.email || "" });
     }
-  }, [user]);
+  }, [user, setValues]);
 
   // наличие изменений
   useEffect(() => {
     if (user) {
-      const isNameChanged = name !== originalName;
-      const isEmailChanged = email !== originalEmail;
-      const isPasswordChanged = password !== "";
+      const isNameChanged = values.name !== originalValues.name;
+      const isEmailChanged = values.email !== originalValues.email;
+      const isPasswordChanged = values.password !== "";
       setIsFormChanged(isNameChanged || isEmailChanged || isPasswordChanged);
     }
-  }, [name, email, password, originalName, originalEmail, user]);
+  }, [values, originalValues, user]);
 
   if (!user) {
     return <div>Подождите, идет загрузка...</div>;
@@ -85,24 +77,24 @@ function ProfileForm() {
       <Input
         type={"text"}
         placeholder={"Имя"}
-        onChange={onChangeName}
-        value={name}
+        onChange={handleChange}
+        value={values.name}
         name={"name"}
         icon={"EditIcon"}
         size={"default"}
         extraClass="mb-6"
       />
       <EmailInput
-        onChange={onEmailChange}
-        value={email}
+        onChange={handleChange}
+        value={values.email}
         name={"email"}
         placeholder="E-mail"
         isIcon={true}
         extraClass="mb-6"
       />
       <PasswordInput
-        onChange={onChangePassword}
-        value={password}
+        onChange={handleChange}
+        value={values.password}
         name={"password"}
         icon="EditIcon"
         extraClass="mb-6"

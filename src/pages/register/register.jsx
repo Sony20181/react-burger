@@ -1,8 +1,8 @@
-import { useState } from "react";
 import styles from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { registerUser } from "../../services/slices/authSlice";
+import { useForm } from "../../hooks/useForm";
 import {
   EmailInput,
   PasswordInput,
@@ -15,32 +15,23 @@ function RegisterPage() {
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const { values, handleChange } = useForm({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  const onChangeNama = (e) => {
-    setName(e.target.value);
-  };
-
-  const onChangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password) {
+    if (!values.name || !values.email || !values.password) {
       return;
     }
     try {
       const result = await dispatch(
         registerUser({
-          email: email,
-          password: password,
-          name: name,
+          email: values.email,
+          password: values.password,
+          name: values.name,
         }),
       ).unwrap();
       if (result.success) {
@@ -58,8 +49,8 @@ function RegisterPage() {
         <Input
           type={"text"}
           placeholder={"Имя"}
-          onChange={onChangeNama}
-          value={name}
+          onChange={handleChange}
+          value={values.name}
           name={"name"}
           error={false}
           errorText={"Ошибка"}
@@ -67,16 +58,16 @@ function RegisterPage() {
           extraClass="mb-6"
         />
         <EmailInput
-          onChange={onChangeEmail}
-          value={email}
+          onChange={handleChange}
+          value={values.email}
           name={"email"}
           isIcon={false}
           extraClass={`mb-6`}
         />
 
         <PasswordInput
-          onChange={onChangePassword}
-          value={password}
+          onChange={handleChange}
+          value={values.password}
           name={"password"}
           extraClass="mb-6"
         />
@@ -90,7 +81,9 @@ function RegisterPage() {
           type="primary"
           size="medium"
           extraClass={`mb-20`}
-          disabled={loading || !name || !email || !password}
+          disabled={
+            loading || !values.name || !values.email || !values.password
+          }
         >
           Зарегистрироваться
         </Button>

@@ -8,32 +8,26 @@ import {
 
 import { requestPasswordReset } from "../../services/slices/passwordResetSlice";
 import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useForm } from "../../hooks/useForm";
 
 function ResetPasswordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [passwordResetValue, setPasswordResetValue] = useState("");
-  const [tokenValue, setTokenValue] = useState("");
-
-  const onChangePassword = (e) => {
-    setPasswordResetValue(e.target.value);
-  };
-
-  const onTokenChange = (e) => {
-    setTokenValue(e.target.value);
-  };
+  const { values, handleChange } = useForm({
+    password: "",
+    token: "",
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!passwordResetValue || !tokenValue) return;
+    if (!values.password || !values.token) return;
 
     try {
       const result = await dispatch(
         requestPasswordReset({
-          password: passwordResetValue,
-          token: tokenValue,
+          password: values.password,
+          token: values.token,
         }),
       ).unwrap();
 
@@ -50,16 +44,16 @@ function ResetPasswordPage() {
       <h1 className={`mb-6`}>Восстановление пароля</h1>
       <form onSubmit={handleSubmit}>
         <PasswordInput
-          onChange={onChangePassword}
-          value={passwordResetValue}
+          onChange={handleChange}
+          value={values.password}
           name={"password"}
           extraClass="mb-6"
         />
         <Input
           type={"text"}
           placeholder={"Введите код из письма"}
-          onChange={onTokenChange}
-          value={tokenValue}
+          onChange={handleChange}
+          value={values.token}
           name={"token"}
           error={false}
           errorText={"Ошибка"}
@@ -71,7 +65,7 @@ function ResetPasswordPage() {
           type="primary"
           size="medium"
           extraClass={`mb-20`}
-          disabled={!passwordResetValue || !tokenValue}
+          disabled={!values.password || !values.token}
         >
           Сохранить
         </Button>

@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styles from "./forgot-password.module.css";
@@ -8,24 +7,24 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { requestPasswordForgot } from "../../services/slices/passwordResetSlice";
+import { useForm } from "../../hooks/useForm";
 
 function ForgotPasswordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.passwordReset);
-  const [emailValue, setEmailValue] = React.useState("");
-  const onChange = (e) => {
-    setEmailValue(e.target.value);
-  };
+  const { values, handleChange } = useForm({ email: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!emailValue) {
+    if (!values.email) {
       return;
     }
 
     try {
-      const result = await dispatch(requestPasswordForgot(emailValue)).unwrap();
+      const result = await dispatch(
+        requestPasswordForgot(values.email),
+      ).unwrap();
       if (result) {
         navigate("/reset-password");
       }
@@ -39,8 +38,8 @@ function ForgotPasswordPage() {
       <h1 className={`mb-6`}>Восстановление пароля</h1>
       <form onSubmit={handleSubmit}>
         <EmailInput
-          onChange={onChange}
-          value={emailValue}
+          onChange={handleChange}
+          value={values.email}
           name={"email"}
           isIcon={false}
           extraClass={`mb-6`}
@@ -57,7 +56,7 @@ function ForgotPasswordPage() {
           type="primary"
           size="medium"
           extraClass={`mb-20`}
-          disabled={loading || !emailValue}
+          disabled={loading || !values.email}
         >
           Восстановить
         </Button>

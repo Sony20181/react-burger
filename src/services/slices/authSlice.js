@@ -27,6 +27,10 @@ export const registerUser = createAsyncThunk(
       mode: "cors",
       body: JSON.stringify({ email, password, name }),
     });
+    if (data.success) {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
     return data;
   },
 );
@@ -39,6 +43,10 @@ export const loginUser = createAsyncThunk(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    if (data.success) {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
     return data;
   },
 );
@@ -51,6 +59,10 @@ export const logoutUser = createAsyncThunk(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: refreshToken }),
     });
+    if (data.success) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
     return data;
   },
 );
@@ -107,12 +119,6 @@ const authSlice = createSlice({
         state.error = null;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        localStorage.setItem("accessToken", action.payload.accessToken);
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
-        console.log("Токены получены:", {
-          accessToken: action.payload.accessToken,
-          refreshToken: action.payload.refreshToken,
-        });
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -130,8 +136,6 @@ const authSlice = createSlice({
         state.error = null;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        localStorage.setItem("accessToken", action.payload.accessToken);
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -144,8 +148,6 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
       })
       // Получение пользователя
       .addCase(getUser.fulfilled, (state, action) => {
