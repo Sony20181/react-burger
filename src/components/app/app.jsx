@@ -1,24 +1,32 @@
 import { useEffect, useState } from "react";
-import BurgerIngredients from "../burger-ingredients/burger-ingredients";
-import BurgerConstructor from "../burger-constructor/burger-constructor";
-import AppHeader from "../header/header";
-import styles from "./app.module.css";
 import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route, useLocation } from "react-router-dom";
+import styles from "./app.module.css";
 import { fetchIngredients } from "../../services/slices/ingredientsSlice";
+import { getUser, refreshToken } from "../../services/slices/authSlice";
+
+import AppHeader from "../header/header";
+import LoginPage from "../../pages/login/login";
+import RegisterPage from "../../pages/register/register";
+import ForgotPasswordPage from "../../pages/forgot-password/forgot-password";
+import ResetPasswordPage from "../../pages/reset-password/reset-password";
+import HomePage from "../../pages/home/home";
+import ProfilePage from "../../pages/profile/profile";
+import ProfileForm from "../../pages/profile/components/profile-form/profile-form";
+import OrdersHistory from "../../pages/profile/components/orders-history/orders-history";
+import ProtectedRouteElement from "../protected-route/protected-route";
+import IngredientDetailsPage from "../../pages/ingredient-details/ingredient-details";
+
+import Modal from "../modalWindow/modal";
+import IngredientDetails from "../modalWindow/ingredientDetails";
 
 function App() {
   const dispatch = useDispatch();
-  const { items, loading, error } = useSelector((state) => state.ingredients);
-  const [isIngredientModalOpen, setIsIngredientModalOpen] = useState(false);
+  const location = useLocation();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
-  function openIngredientModal() {
-    setIsIngredientModalOpen(true);
-  }
-
-  function closeIngredientModal() {
-    setIsIngredientModalOpen(false);
-  }
+  const background = location.state?.background;
 
   function openOrderModal() {
     setIsOrderModalOpen(true);
@@ -32,51 +40,103 @@ function App() {
     dispatch(fetchIngredients());
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <div className={`${styles.app}`}>
-        <AppHeader />
-        <div>Пожалуйста, подождите. Ваши бургеры загружаются...</div>
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className={`${styles.app}`}>
-        <AppHeader />
-        <div>
-          Просим прощение за неудобства,попробуйте перезагрузить страницу или
-          вернуться позже...
-        </div>
-      </div>
-    );
-  }
-  if (!items || items.length === 0) {
-    return (
-      <div className={`${styles.app}`}>
-        <AppHeader />
-        <div>Продукты закончились... Приходите позже!</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken && !user) {
+      dispatch(getUser(accessToken)).catch(() => {
+        const refreshTokenValue = localStorage.getItem("refreshToken");
+        if (refreshTokenValue) {
+          dispatch(refreshToken(refreshTokenValue)).then(() => {
+            dispatch(getUser());
+          });
+        }
+      });
+    }
+  }, [dispatch, user]);
+
   return (
     <div className={`${styles.app}`}>
       <AppHeader />
-      <main className={`${styles.main} p-4`}>
-        <section className={`${styles.sectionBurgerIngredients}`}>
-          <BurgerIngredients
-            isOpenModal={isIngredientModalOpen}
-            closeModal={closeIngredientModal}
-            openModal={openIngredientModal}
+      <main>
+        <Routes location={background || location}>
+          {/* Публичные маршруты */}
+          <Route
+            path="/"
+            element={
+              <HomePage
+                isOrderModalOpen={isOrderModalOpen}
+                closeOrderModal={closeOrderModal}
+                openOrderModal={openOrderModal}
+              />
+            }
           />
-        </section>
-        <section className={`${styles.sectionBurgerConstructor} p-4`}>
-          <BurgerConstructor
-            isOpenModal={isOrderModalOpen}
-            closeModal={closeOrderModal}
-            openModal={openOrderModal}
+          <Route path="/ingredients/:id" element={<IngredientDetailsPage />} />
+
+          {/* Маршруты только для неавторизованных */}
+          <Route
+            path="/login"
+            element={
+              <ProtectedRouteElement anonymous={true}>
+                <LoginPage />
+              </ProtectedRouteElement>
+            }
           />
-        </section>
+          <Route
+            path="/register"
+            element={
+              <ProtectedRouteElement anonymous={true}>
+                <RegisterPage />
+              </ProtectedRouteElement>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <ProtectedRouteElement anonymous={true}>
+                <ForgotPasswordPage />
+              </ProtectedRouteElement>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <ProtectedRouteElement anonymous={true}>
+                <ResetPasswordPage />
+              </ProtectedRouteElement>
+            }
+          />
+
+          {/* Защищённые маршруты */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRouteElement anonymous={false}>
+                <ProfilePage />
+              </ProtectedRouteElement>
+            }
+          >
+            <Route index element={<ProfileForm />} />
+            <Route path="orders" element={<OrdersHistory />} />
+          </Route>
+
+          {/*<Route path="*" element={<NotFoundPage />} />*/}
+        </Routes>
+        {/*для модального окна/ страницы ингредиентов */}
+        {background && (
+          <Routes>
+            <Route
+              path="/ingredients/:id"
+              element={
+                <Modal
+                  title="Детали ингредиента"
+                  onClose={() => window.history.back()}
+                >
+                  <IngredientDetails />
+                </Modal>
+              }
+            />
+          </Routes>
+        )}
       </main>
     </div>
   );

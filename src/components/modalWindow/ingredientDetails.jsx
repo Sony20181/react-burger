@@ -1,10 +1,15 @@
 import styles from "./modal.module.css";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-function IngredientDetails() {
-  const ingredient = useSelector(
-    (state) => state.ingredientDetails.currentIngredient,
-  );
+import PropTypes from "prop-types";
+
+function IngredientDetails({ ingredient: propIngredient }) {
+  const { id } = useParams();
+  const { items } = useSelector((state) => state.ingredients);
+
+  const ingredient = propIngredient || items.find((item) => item._id === id);
+
   if (!ingredient) {
     return <p>Информация об ингредиенте отсутствует</p>;
   }
@@ -48,5 +53,9 @@ function IngredientDetails() {
     </div>
   );
 }
+
+IngredientDetails.propTypes = {
+  ingredient: PropTypes.object,
+};
 
 export default IngredientDetails;
