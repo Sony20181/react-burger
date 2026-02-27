@@ -1,17 +1,17 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import styles from "./profile.module.css";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks/redux";
 import { logoutUser } from "../../services/slices/authSlice";
 
 function ProfilePage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
       try {
-        await dispatch(logoutUser(refreshToken)).unwrap();
+        await dispatch((logoutUser as any)(refreshToken)).unwrap();
         navigate("/login");
       } catch (err) {
         console.error("Ошибка при выходе:", err);

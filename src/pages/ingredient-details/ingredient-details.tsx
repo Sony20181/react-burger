@@ -1,14 +1,29 @@
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/redux";
 import styles from "./ingredient-details.module.css";
+import { IngredientType } from "../../utils/types";
 
 function IngredientDetailsPage() {
-  const { id } = useParams();
-  const { items } = useSelector((state) => state.ingredients);
-  const ingredient = items.find((item) => item._id === id);
+  const { id } = useParams<{ id: string }>();
+  const { items, loading } = useAppSelector(
+    (state) =>
+      state.ingredients as { items: IngredientType[]; loading: boolean },
+  );
 
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <p className="text text_type_main-medium">Загрузка...</p>
+      </div>
+    );
+  }
+  const ingredient = items.find((item) => item._id === id);
   if (!ingredient) {
-    return <div className={styles.container}>Ингредиент не найден</div>;
+    return (
+      <div className={styles.container}>
+        <p className="text text_type_main-medium">Ингредиент не найден</p>
+      </div>
+    );
   }
   return (
     <div className={styles.container}>

@@ -10,7 +10,7 @@ export const LOGOUT_ENDPOINT = `/auth/logout`;
 export const TOKEN_UPDATE_ENDPOINT = `/auth/token`;
 export const INFO_USER_ENDPOINT = `/auth/user`; // информация пользователя
 
-export const checkResponse = (res) => {
+export const checkResponse = <T>(res: Response): Promise<T> => {
   if (res.ok) {
     return res.json();
   }
@@ -19,7 +19,10 @@ export const checkResponse = (res) => {
   });
 };
 
-export const request = (endpoint, options = {}) => {
+export const request = <T>(
+  endpoint: string,
+  options?: RequestInit,
+): Promise<T> => {
   const url = `${BASE_URL}${endpoint}`;
-  return fetch(url, options).then(checkResponse);
+  return fetch(url, options).then(checkResponse<T>);
 };

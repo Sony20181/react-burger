@@ -1,3 +1,4 @@
+import { FormEvent } from "react";
 import styles from "./reset-password.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -7,11 +8,11 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import { requestPasswordReset } from "../../services/slices/passwordResetSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks/redux";
 import { useForm } from "../../hooks/useForm";
 
 function ResetPasswordPage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { values, handleChange } = useForm({
@@ -19,13 +20,13 @@ function ResetPasswordPage() {
     token: "",
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!values.password || !values.token) return;
 
     try {
       const result = await dispatch(
-        requestPasswordReset({
+        (requestPasswordReset as any)({
           password: values.password,
           token: values.token,
         }),
@@ -59,6 +60,8 @@ function ResetPasswordPage() {
           errorText={"Ошибка"}
           size={"default"}
           extraClass="mb-6"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         />
         <Button
           htmlType="submit"

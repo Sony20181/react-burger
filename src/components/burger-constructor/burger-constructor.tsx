@@ -4,13 +4,12 @@ import {
   ConstructorElement,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-constructor.module.css";
-import PropTypes from "prop-types";
-import Modal from "../modalWindow/modal";
+import { Modal } from "../modalWindow/modal";
 import OrderDetails from "../modalWindow/orderDetails";
-import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useDrop } from "react-dnd";
 import { DND_TYPES } from "../../utils/dnd-types";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { addBun, addIngredient } from "../../services/slices/constructorSlice";
 
 import { createOrder, clearOrder } from "../../services/slices/orderSlice";
@@ -18,18 +17,39 @@ import DraggableConstructorItem from "./draggable-constructor-item/draggable-con
 
 import { clearConstructor } from "../../services/slices/constructorSlice";
 import { useNavigate } from "react-router-dom";
+import { IngredientType } from "../../utils/types";
 
-function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
-  const dispatch = useDispatch();
+type BurgerConstructorProps = {
+  isOpenModal: boolean;
+  closeModal: () => void;
+  openModal: () => void;
+};
+
+type ConstructorItem = IngredientType & {
+  uuid: string;
+  id?: string;
+};
+
+type ConstructorState = {
+  bun: IngredientType | null;
+  main: ConstructorItem[];
+};
+
+export const BurgerConstructor: FC<BurgerConstructorProps> = ({
+  isOpenModal,
+  closeModal,
+  openModal,
+}) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector((state) => state.order);
-  const { isAuthenticated } = useSelector((state) => state.auth);
-  const { bun, main: ingredients } = useSelector(
-    (state) => state.burgerConstructor,
+  const { loading } = useAppSelector((state) => state.order);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { bun, main: ingredients } = useAppSelector(
+    (state) => state.burgerConstructor as ConstructorState,
   );
 
   const handleOrderClick = async () => {
-    if (!bun || ingredients === 0) return;
+    if (!bun || ingredients.length === 0) return;
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -37,13 +57,16 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
     try {
       const orderDetails = [
         bun._id,
-        ...ingredients.map((item) => item.id),
+        ...ingredients.map((item) => item._id),
         bun._id,
       ];
-      const result = await dispatch(createOrder(orderDetails)).unwrap();
+      // временное решение
+      const result = await dispatch(
+        (createOrder as any)(orderDetails),
+      ).unwrap();
       if (result) {
         openModal();
-        dispatch(clearConstructor());
+        dispatch(clearConstructor({}));
       }
     } catch (error) {
       console.error("Ошибка создания заказа:", error);
@@ -52,7 +75,7 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
 
   const [{ isHover }, dropTarget] = useDrop({
     accept: DND_TYPES.INGREDIENT,
-    drop(item) {
+    drop(item: IngredientType) {
       if (item.type === "bun") {
         dispatch(addBun(item));
       } else {
@@ -149,11 +172,4 @@ function BurgerConstructor({ isOpenModal, closeModal, openModal }) {
       </div>
     </div>
   );
-}
-
-BurgerConstructor.propTypes = {
-  isOpenModal: PropTypes.bool,
-  closeModal: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired,
 };
-export default BurgerConstructor;

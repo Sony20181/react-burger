@@ -1,9 +1,8 @@
-import { useRef } from "react";
+import { FC, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import PropTypes from "prop-types";
 import styles from "./draggable-constructor-item.module.css";
 import { DND_TYPES } from "../../../utils/dnd-types";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../hooks/redux";
 import {
   removeIngredient,
   moveIngredient,
@@ -13,9 +12,25 @@ import {
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
-const DraggableConstructorItem = ({ item, index }) => {
-  const dispatch = useDispatch();
-  const ref = useRef(null);
+import { IngredientType } from "../../../utils/types";
+
+type ConstructorItem = IngredientType & {
+  uuid: string;
+};
+type DraggableConstructorProps = {
+  item: ConstructorItem;
+  index: number;
+};
+
+type DragItem = {
+  index: number;
+};
+const DraggableConstructorItem: FC<DraggableConstructorProps> = ({
+  item,
+  index,
+}) => {
+  const dispatch = useAppDispatch();
+  const ref = useRef<HTMLDivElement>(null);
   const [{ isDragging }, dragRef] = useDrag({
     type: DND_TYPES.CONSTRUCTOR_INGREDIENT,
     item: () => ({ index }),
@@ -24,17 +39,17 @@ const DraggableConstructorItem = ({ item, index }) => {
     }),
   });
 
-  function handleRemoveIngredient(id) {
+  function handleRemoveIngredient(id: string) {
     dispatch(removeIngredient(id));
   }
 
-  function handleMoveIngredient(dragIndex, hoverIndex) {
+  function handleMoveIngredient(dragIndex: number, hoverIndex: number) {
     dispatch(moveIngredient({ dragIndex, hoverIndex }));
   }
 
   const [, dropRef] = useDrop({
     accept: DND_TYPES.CONSTRUCTOR_INGREDIENT,
-    hover: (draggedItem) => {
+    hover: (draggedItem: DragItem) => {
       if (draggedItem.index === index) return;
       handleMoveIngredient(draggedItem.index, index);
       draggedItem.index = index;
@@ -55,11 +70,6 @@ const DraggableConstructorItem = ({ item, index }) => {
       />
     </div>
   );
-};
-
-DraggableConstructorItem.propTypes = {
-  item: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
 };
 
 export default DraggableConstructorItem;

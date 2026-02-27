@@ -1,10 +1,23 @@
 import styles from "./home.module.css";
 import BurgerIngredients from "../../components/burger-ingredients/burger-ingredients";
-import BurgerConstructor from "../../components/burger-constructor/burger-constructor";
-import { useSelector } from "react-redux";
-import PropTypes from "prop-types";
-function HomePage({ isOrderModalOpen, closeOrderModal, openOrderModal }) {
-  const { items, loading, error } = useSelector((state) => state.ingredients);
+import { BurgerConstructor } from "../../components/burger-constructor/burger-constructor";
+import { useAppSelector } from "../../hooks/redux";
+import { FC } from "react";
+
+type HomePageProps = {
+  isOrderModalOpen: boolean;
+  closeOrderModal: () => void;
+  openOrderModal: () => void;
+};
+
+export const HomePage: FC<HomePageProps> = ({
+  isOrderModalOpen,
+  closeOrderModal,
+  openOrderModal,
+}) => {
+  const { items, loading, error } = useAppSelector(
+    (state) => state.ingredients,
+  );
   if (loading) {
     return <div>Пожалуйста, подождите. Ваши бургеры загружаются...</div>;
   }
@@ -33,12 +46,4 @@ function HomePage({ isOrderModalOpen, closeOrderModal, openOrderModal }) {
       </section>
     </div>
   );
-}
-
-HomePage.propTypes = {
-  isOrderModalOpen: PropTypes.bool,
-  closeOrderModal: PropTypes.func.isRequired,
-  openOrderModal: PropTypes.func.isRequired,
 };
-
-export default HomePage;
