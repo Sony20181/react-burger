@@ -1,4 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
+import { FormEvent } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useNavigate } from "react-router-dom";
 import styles from "./forgot-password.module.css";
 import { Link } from "react-router-dom";
@@ -10,20 +11,20 @@ import { requestPasswordForgot } from "../../services/slices/passwordResetSlice"
 import { useForm } from "../../hooks/useForm";
 
 function ForgotPasswordPage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.passwordReset);
+  const { loading, error } = useAppSelector((state) => state.passwordReset);
   const { values, handleChange } = useForm({ email: "" });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!values.email) {
       return;
     }
-
+    // временное решение
     try {
       const result = await dispatch(
-        requestPasswordForgot(values.email),
+        (requestPasswordForgot as any)(values.email),
       ).unwrap();
       if (result) {
         navigate("/reset-password");

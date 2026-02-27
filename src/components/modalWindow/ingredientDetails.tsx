@@ -1,12 +1,21 @@
 import styles from "./modal.module.css";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/redux";
 import { useParams } from "react-router-dom";
 
-import PropTypes from "prop-types";
+import { IngredientType } from "../../utils/types";
+import { FC } from "react";
 
-function IngredientDetails({ ingredient: propIngredient }) {
-  const { id } = useParams();
-  const { items } = useSelector((state) => state.ingredients);
+type IngredientDetailsProps = {
+  ingredient?: IngredientType;
+};
+
+export const IngredientDetails: FC<IngredientDetailsProps> = ({
+  ingredient: propIngredient,
+}) => {
+  const { id } = useParams<{ id: string }>();
+  const { items } = useAppSelector(
+    (state) => state.ingredients as { items: IngredientType[] },
+  );
 
   const ingredient = propIngredient || items.find((item) => item._id === id);
 
@@ -52,10 +61,4 @@ function IngredientDetails({ ingredient: propIngredient }) {
       </div>
     </div>
   );
-}
-
-IngredientDetails.propTypes = {
-  ingredient: PropTypes.object,
 };
-
-export default IngredientDetails;

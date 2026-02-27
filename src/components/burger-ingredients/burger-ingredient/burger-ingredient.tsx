@@ -4,16 +4,28 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 import { IngredientType } from "../../../utils/types";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../../hooks/redux";
 import { useDrag } from "react-dnd";
 import { DND_TYPES } from "../../../utils/dnd-types";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FC } from "react";
 
-function BurgerIngredient({ item }) {
+type IngredientProps = {
+  item: IngredientType;
+};
+
+type ConstructorState = {
+  bun: IngredientType | null;
+  main: IngredientType[];
+};
+
+export const BurgerIngredient: FC<IngredientProps> = ({ item }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { bun, main } = useSelector((state) => state.burgerConstructor);
+  const { bun, main } = useAppSelector(
+    (state) => state.burgerConstructor as ConstructorState,
+  );
 
   // считаем кол-во ингредиентов
   let count = 0;
@@ -40,6 +52,9 @@ function BurgerIngredient({ item }) {
   };
 
   if (!item) return null;
+  if (isDrag) {
+    return null;
+  }
 
   return (
     !isDrag && (
@@ -68,10 +83,4 @@ function BurgerIngredient({ item }) {
       </div>
     )
   );
-}
-
-BurgerIngredient.propTypes = {
-  item: IngredientType.isRequired,
 };
-
-export default BurgerIngredient;

@@ -1,6 +1,7 @@
+import { FormEvent } from "react";
 import styles from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { registerUser } from "../../services/slices/authSlice";
 import { useForm } from "../../hooks/useForm";
 import {
@@ -11,9 +12,9 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 function RegisterPage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const { values, handleChange } = useForm({
     name: "",
@@ -21,14 +22,14 @@ function RegisterPage() {
     password: "",
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!values.name || !values.email || !values.password) {
       return;
     }
     try {
       const result = await dispatch(
-        registerUser({
+        (registerUser as any)({
           email: values.email,
           password: values.password,
           name: values.name,
@@ -56,6 +57,8 @@ function RegisterPage() {
           errorText={"Ошибка"}
           size={"default"}
           extraClass="mb-6"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         />
         <EmailInput
           onChange={handleChange}

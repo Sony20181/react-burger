@@ -1,3 +1,4 @@
+import { FormEvent } from "react";
 import styles from "./login.module.css";
 import { Link } from "react-router-dom";
 import {
@@ -6,14 +7,14 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { loginUser } from "../../services/slices/authSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useForm } from "../../hooks/useForm";
 
 function LoginPage() {
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/";
 
@@ -21,16 +22,16 @@ function LoginPage() {
     email: "",
     password: "",
   });
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!values.email || !values.password) {
       return;
     }
     try {
       const result = await dispatch(
-        loginUser({
+        (loginUser as any)({
           email: values.email,
           password: values.password,
         }),

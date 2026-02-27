@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import {
   Input,
   EmailInput,
@@ -7,12 +7,34 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./profile-form.module.css";
 import { updateUser } from "../../../../services/slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { useForm } from "../../../../hooks/useForm";
 
+type User = {
+  name: string;
+  email: string;
+};
+
+type AuthState = {
+  user: User | null;
+  loading?: boolean;
+  error?: string | null;
+};
+
+type UserData = {
+  name?: string;
+  email?: string;
+  password?: string;
+};
+
+type OriginalValues = {
+  name: string;
+  email: string;
+};
+
 function ProfileForm() {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth as AuthState);
 
   const { values, handleChange, setValues } = useForm({
     name: "",
@@ -20,18 +42,21 @@ function ProfileForm() {
     password: "",
   });
 
-  const [originalValues, setOriginalValues] = useState({ name: "", email: "" });
-  const [isFormChanged, setIsFormChanged] = useState(false);
+  const [originalValues, setOriginalValues] = useState<OriginalValues>({
+    name: "",
+    email: "",
+  });
+  const [isFormChanged, setIsFormChanged] = useState<boolean>(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("accessToken");
-    const userData = {};
+    const userData: UserData = {};
     if (values.name !== originalValues.name) userData.name = values.name;
     if (values.email !== originalValues.email) userData.email = values.email;
     if (values.password) userData.password = values.password;
     try {
-      await dispatch(updateUser({ userData, accessToken })).unwrap();
+      await dispatch((updateUser as any)({ userData, accessToken })).unwrap();
       setOriginalValues({ name: values.name, email: values.email });
       setValues({ ...values, password: "" });
       setIsFormChanged(false);
@@ -83,6 +108,8 @@ function ProfileForm() {
         icon={"EditIcon"}
         size={"default"}
         extraClass="mb-6"
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
       />
       <EmailInput
         onChange={handleChange}

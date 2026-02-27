@@ -1,27 +1,31 @@
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useEffect, useRef, useState } from "react";
 import styles from "./burger-ingredients.module.css";
-import BurgerIngredient from "./burger-ingredient/burger-ingredient";
-
-import { useSelector } from "react-redux";
+import { BurgerIngredient } from "./burger-ingredient/burger-ingredient";
+import { IngredientType } from "../../utils/types";
+import { useAppSelector } from "../../hooks/redux";
 
 function BurgerIngredients() {
-  const { items } = useSelector((state) => state.ingredients);
+  const { items } = useAppSelector(
+    (state) => state.ingredients as { items: IngredientType[] },
+  );
 
-  const bunRef = useRef();
-  const sauceRef = useRef(null);
-  const toppingsRef = useRef(null);
-  const containerRef = useRef(null);
+  const bunRef = useRef<HTMLElement>(null);
+  const sauceRef = useRef<HTMLElement>(null);
+  const toppingsRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const [activeTabFromScroll, setActiveTabFromScroll] = useState("bun");
-  const [selectedTabByClick, setSelectedTabByClick] = useState(null);
+  const [activeTabFromScroll, setActiveTabFromScroll] = useState<string>("bun");
+  const [selectedTabByClick, setSelectedTabByClick] = useState<string | null>(
+    null,
+  );
   const activeTab = selectedTabByClick || activeTabFromScroll;
 
   const buns = items.filter((item) => item.type === "bun");
   const sauce = items.filter((item) => item.type === "sauce");
   const toppings = items.filter((item) => item.type === "main");
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (tab: string) => {
     setSelectedTabByClick(tab);
     let elementToScroll = null;
     if (tab === "bun") {
@@ -45,6 +49,14 @@ function BurgerIngredients() {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (
+        !containerRef.current ||
+        !bunRef.current ||
+        !sauceRef.current ||
+        !toppingsRef.current
+      ) {
+        return;
+      }
       const containerTop = containerRef.current.getBoundingClientRect().top;
       const bunsPosition = bunRef.current.getBoundingClientRect().top;
       const saucePosition = sauceRef.current.getBoundingClientRect().top;

@@ -6,7 +6,7 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import headerStyles from "./header.module.css";
 import navStyles from "../navMenu/navItem.module.css";
-import NavItem from "../navMenu/navItem";
+import { NavItem } from "../navMenu/navItem";
 import { NavLink, useLocation } from "react-router-dom";
 
 function AppHeader() {

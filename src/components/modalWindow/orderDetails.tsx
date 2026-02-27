@@ -1,10 +1,17 @@
 import styles from "./modal.module.css";
 import orderDone from "../../images/orderDone.svg";
 import orderLoad from "../../images/orderLoad.svg";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/redux";
+
+type OrderState = {
+  currentOrder: { number: number } | null;
+  loading: boolean;
+};
 
 function OrderDetails() {
-  const { currentOrder, loading } = useSelector((state) => state.order);
+  const { currentOrder, loading } = useAppSelector(
+    (state) => state.order as OrderState,
+  );
   if (loading) {
     return (
       <div className={styles.orderDetails}>
@@ -19,6 +26,9 @@ function OrderDetails() {
         </p>
       </div>
     );
+  }
+  if (!currentOrder) {
+    return null;
   }
   return (
     <div className={styles.orderDetails}>
