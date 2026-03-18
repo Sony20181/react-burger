@@ -26,7 +26,7 @@ function ResetPasswordPage() {
 
     try {
       const result = await dispatch(
-        (requestPasswordReset as any)({
+        requestPasswordReset({
           password: values.password,
           token: values.token,
         }),

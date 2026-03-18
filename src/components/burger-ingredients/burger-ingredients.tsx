@@ -2,13 +2,10 @@ import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useEffect, useRef, useState } from "react";
 import styles from "./burger-ingredients.module.css";
 import { BurgerIngredient } from "./burger-ingredient/burger-ingredient";
-import { IngredientType } from "../../utils/types";
 import { useAppSelector } from "../../hooks/redux";
 
 function BurgerIngredients() {
-  const { items } = useAppSelector(
-    (state) => state.ingredients as { items: IngredientType[] },
-  );
+  const { items } = useAppSelector((state) => state.ingredients);
 
   const bunRef = useRef<HTMLElement>(null);
   const sauceRef = useRef<HTMLElement>(null);

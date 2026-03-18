@@ -25,16 +25,6 @@ type BurgerConstructorProps = {
   openModal: () => void;
 };
 
-type ConstructorItem = IngredientType & {
-  uuid: string;
-  id?: string;
-};
-
-type ConstructorState = {
-  bun: IngredientType | null;
-  main: ConstructorItem[];
-};
-
 export const BurgerConstructor: FC<BurgerConstructorProps> = ({
   isOpenModal,
   closeModal,
@@ -45,7 +35,7 @@ export const BurgerConstructor: FC<BurgerConstructorProps> = ({
   const { loading } = useAppSelector((state) => state.order);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { bun, main: ingredients } = useAppSelector(
-    (state) => state.burgerConstructor as ConstructorState,
+    (state) => state.burgerConstructor,
   );
 
   const handleOrderClick = async () => {
@@ -60,13 +50,11 @@ export const BurgerConstructor: FC<BurgerConstructorProps> = ({
         ...ingredients.map((item) => item._id),
         bun._id,
       ];
-      // временное решение
-      const result = await dispatch(
-        (createOrder as any)(orderDetails),
-      ).unwrap();
+
+      const result = await dispatch(createOrder(orderDetails)).unwrap();
       if (result) {
         openModal();
-        dispatch(clearConstructor({}));
+        dispatch(clearConstructor());
       }
     } catch (error) {
       console.error("Ошибка создания заказа:", error);
@@ -107,7 +95,7 @@ export const BurgerConstructor: FC<BurgerConstructorProps> = ({
   }, [bun, ingredients]);
 
   function handleCloseModal() {
-    clearOrder();
+    dispatch(clearOrder());
     closeModal();
   }
 

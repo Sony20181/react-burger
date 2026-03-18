@@ -31,7 +31,7 @@ function LoginPage() {
     }
     try {
       const result = await dispatch(
-        (loginUser as any)({
+        loginUser({
           email: values.email,
           password: values.password,
         }),

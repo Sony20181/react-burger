@@ -13,3 +13,22 @@ export type IngredientType = {
   __v?: number;
   uuid?: string;
 };
+
+export type Order = {
+  _id: string;
+  ingredients: string[];
+  status: "done" | "pending" | "created";
+  name: string;
+  number: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type FeedResponse = {
+  success: boolean;
+  orders: Order[];
+  total: number;
+  totalToday: number;
+};
+
+export type WebsocketStatus = "CONNECTING" | "ONLINE" | "OFFLINE";

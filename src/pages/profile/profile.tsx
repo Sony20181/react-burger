@@ -11,7 +11,7 @@ function ProfilePage() {
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
       try {
-        await dispatch((logoutUser as any)(refreshToken)).unwrap();
+        await dispatch(logoutUser(refreshToken)).unwrap();
         navigate("/login");
       } catch (err) {
         console.error("Ошибка при выходе:", err);

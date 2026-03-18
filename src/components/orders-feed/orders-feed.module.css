@@ -1,0 +1,13 @@
+.feed {
+  width: 100%;
+  max-width: 600px;
+}
+
+.ordersList {
+  max-height: 912px;
+  overflow-y: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

@@ -32,7 +32,7 @@ function AppHeader() {
             />
           </NavLink>
           <NavLink
-            to="/order-feed"
+            to="/feed"
             className={({ isActive }) =>
               isActive ? navStyles.active : "text_color_inactive"
             }

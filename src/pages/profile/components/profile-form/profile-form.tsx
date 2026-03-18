@@ -51,12 +51,16 @@ function ProfileForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.log("Токен не найден");
+      return;
+    }
     const userData: UserData = {};
     if (values.name !== originalValues.name) userData.name = values.name;
     if (values.email !== originalValues.email) userData.email = values.email;
     if (values.password) userData.password = values.password;
     try {
-      await dispatch((updateUser as any)({ userData, accessToken })).unwrap();
+      await dispatch(updateUser({ userData, accessToken })).unwrap();
       setOriginalValues({ name: values.name, email: values.email });
       setValues({ ...values, password: "" });
       setIsFormChanged(false);

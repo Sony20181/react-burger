@@ -13,12 +13,15 @@ import ResetPasswordPage from "../../pages/reset-password/reset-password";
 import { HomePage } from "../../pages/home/home";
 import ProfilePage from "../../pages/profile/profile";
 import ProfileForm from "../../pages/profile/components/profile-form/profile-form";
-import OrdersHistory from "../../pages/profile/components/orders-history/orders-history";
 import { ProtectedRouteElement } from "../protected-route/protected-route";
 import IngredientDetailsPage from "../../pages/ingredient-details/ingredient-details";
 
 import { Modal } from "../modalWindow/modal";
 import { IngredientDetails } from "../modalWindow/ingredientDetails";
+import { FeedPage } from "../../pages/order-feed/feed";
+import { OrderInfoPage } from "../../pages/order-feed/order-info/order-info";
+import { OrderInfoDetails } from "../orders-feed/order-info-details/order-info-details";
+import { ProfileOrdersPage } from "../../pages/profile/components/order/profile-orders";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -43,11 +46,11 @@ function App() {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken && !user) {
-      dispatch((getUser as any)(accessToken)).catch(() => {
+      dispatch(getUser(accessToken)).catch(() => {
         const refreshTokenValue = localStorage.getItem("refreshToken");
         if (refreshTokenValue) {
-          dispatch((refreshToken as any)(refreshTokenValue)).then(() => {
-            dispatch(getUser());
+          dispatch(refreshToken(refreshTokenValue)).then(() => {
+            dispatch(getUser(accessToken));
           });
         }
       });
@@ -71,6 +74,8 @@ function App() {
             }
           />
           <Route path="/ingredients/:id" element={<IngredientDetailsPage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/feed/:id" element={<OrderInfoPage />} />
 
           {/* Маршруты только для неавторизованных */}
           <Route
@@ -116,10 +121,17 @@ function App() {
             }
           >
             <Route index element={<ProfileForm />} />
-            <Route path="orders" element={<OrdersHistory />} />
+            {/*<Route path="orders" element={<OrdersHistory />} />*/}
+            <Route path="orders" element={<ProfileOrdersPage />} />
           </Route>
-
-          {/*<Route path="*" element={<NotFoundPage />} />*/}
+          <Route
+            path="/profile/orders/:id"
+            element={
+              <ProtectedRouteElement anonymous={false}>
+                <OrderInfoPage />
+              </ProtectedRouteElement>
+            }
+          />
         </Routes>
         {/*для модального окна/ страницы ингредиентов */}
         {background && (
@@ -132,6 +144,22 @@ function App() {
                   onClose={() => window.history.back()}
                 >
                   <IngredientDetails />
+                </Modal>
+              }
+            />
+            <Route
+              path="/feed/:id"
+              element={
+                <Modal title="" onClose={() => window.history.back()}>
+                  <OrderInfoDetails />
+                </Modal>
+              }
+            />
+            <Route
+              path="/profile/orders/:id"
+              element={
+                <Modal title="" onClose={() => window.history.back()}>
+                  <OrderInfoDetails />
                 </Modal>
               }
             />

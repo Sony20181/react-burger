@@ -21,10 +21,9 @@ function ForgotPasswordPage() {
     if (!values.email) {
       return;
     }
-    // временное решение
     try {
       const result = await dispatch(
-        (requestPasswordForgot as any)(values.email),
+        requestPasswordForgot(values.email),
       ).unwrap();
       if (result) {
         navigate("/reset-password");
