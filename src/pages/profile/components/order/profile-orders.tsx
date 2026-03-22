@@ -1,11 +1,12 @@
 import { FC, useEffect, useRef } from "react";
-import styles from "./profile-orders.module.css";
+import { ProfileNav } from "../profile-nav/profile-nav";
 import { OrdersFeed } from "../../../../components/orders-feed/orders-feed";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import {
   connectProfileOrders,
   disconnectProfileOrders,
 } from "../../../../services/actions/profileOrdersActions";
+import styles from "../../profile.module.css";
 
 export const ProfileOrdersPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +16,6 @@ export const ProfileOrdersPage: FC = () => {
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
-
       dispatch(connectProfileOrders());
     }
     return () => {
@@ -26,36 +26,24 @@ export const ProfileOrdersPage: FC = () => {
     };
   }, [dispatch]);
 
-  if (status === "CONNECTING") {
-    return (
-      <div className={styles.container}>
-        <p className="text text_type_main-medium">
-          Получаем историю заказов...
-        </p>
-      </div>
-    );
-  }
-  if (status === "OFFLINE") {
-    return (
-      <div className={styles.container}>
-        <p className="text text_type_main-medium">
-          Ошибка подключения.Что-то пошло не так..
-        </p>
-      </div>
-    );
-  }
-  if (orders.length === 0) {
-    return (
-      <div className={styles.container}>
-        <p className="text text_type_main-medium">
-          История заказов отсутствуют. Сделайте свой первый заказ!
-        </p>
-      </div>
-    );
-  }
   return (
-    <div className={styles.container}>
-      <OrdersFeed orders={orders} showStatus={true} />
+    <div className={`${styles.containerProfile} mb-6`}>
+      <ProfileNav />
+      <div className={`${styles.content}`}>
+        {status === "CONNECTING" ? (
+          <p className="text text_type_main-default">
+            Получаем историю заказов...
+          </p>
+        ) : status === "OFFLINE" ? (
+          <p className="text text_type_main-default">Ошибка подключения...</p>
+        ) : orders.length === 0 ? (
+          <p className="text text_type_main-default">
+            История заказов отсутствует. Сделайте свой первый заказ!
+          </p>
+        ) : (
+          <OrdersFeed orders={orders} showStatus={true} />
+        )}
+      </div>
     </div>
   );
 };

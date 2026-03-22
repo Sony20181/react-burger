@@ -12,7 +12,6 @@ import ForgotPasswordPage from "../../pages/forgot-password/forgot-password";
 import ResetPasswordPage from "../../pages/reset-password/reset-password";
 import { HomePage } from "../../pages/home/home";
 import ProfilePage from "../../pages/profile/profile";
-import ProfileForm from "../../pages/profile/components/profile-form/profile-form";
 import { ProtectedRouteElement } from "../protected-route/protected-route";
 import IngredientDetailsPage from "../../pages/ingredient-details/ingredient-details";
 
@@ -112,6 +111,7 @@ function App() {
           />
 
           {/* Защищённые маршруты */}
+
           <Route
             path="/profile"
             element={
@@ -119,13 +119,10 @@ function App() {
                 <ProfilePage />
               </ProtectedRouteElement>
             }
-          >
-            <Route index element={<ProfileForm />} />
-            {/*<Route path="orders" element={<OrdersHistory />} />*/}
-            <Route path="orders" element={<ProfileOrdersPage />} />
-          </Route>
+          ></Route>
+          <Route path="profile/orders" element={<ProfileOrdersPage />} />
           <Route
-            path="/profile/orders/:id"
+            path="profile/orders/:id"
             element={
               <ProtectedRouteElement anonymous={false}>
                 <OrderInfoPage />
@@ -158,9 +155,11 @@ function App() {
             <Route
               path="/profile/orders/:id"
               element={
-                <Modal title="" onClose={() => window.history.back()}>
-                  <OrderInfoDetails />
-                </Modal>
+                <ProtectedRouteElement anonymous={false}>
+                  <Modal title="" onClose={() => window.history.back()}>
+                    <OrderInfoDetails />
+                  </Modal>
+                </ProtectedRouteElement>
               }
             />
           </Routes>

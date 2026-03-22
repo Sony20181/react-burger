@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState, useEffect } from "react";
 import {
   CurrencyIcon,
   FormattedDate,
@@ -8,7 +8,9 @@ import { useAppSelector } from "../../../hooks/redux";
 import { useParams } from "react-router-dom";
 
 export const OrderInfoDetails: FC = () => {
-  const { items } = useAppSelector((state) => state.ingredients);
+  const { items, loading: ingredientsLoading } = useAppSelector(
+    (state) => state.ingredients,
+  );
   const { id } = useParams<{ id: string }>();
   const { orders: feedOrders, status: feedStatus } = useAppSelector(
     (state) => state.feed,
@@ -16,16 +18,36 @@ export const OrderInfoDetails: FC = () => {
   const { orders: profileOrders, status: profileStatus } = useAppSelector(
     (state) => state.profileOrders,
   );
+  const [isReady, setIsReady] = useState(false);
 
-  //const order = orders.find((order) => order.number === Number(id));
   const order = [...(feedOrders || []), ...(profileOrders || [])].find(
     (order) => order.number === Number(id),
   );
 
+  useEffect(() => {
+    if (order && !ingredientsLoading && items.length > 0) {
+      const allIngredientsExist = order.ingredients.every((ingredientId) =>
+        items.some((item) => item._id === ingredientId),
+      );
+      if (allIngredientsExist) {
+        setIsReady(true);
+      } else {
+        const timer = setTimeout(() => {
+          setIsReady(true);
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      setIsReady(false);
+    }
+  }, [order, items, ingredientsLoading]);
+
   const ingredientsWithCount = useMemo(() => {
+    if (!order || !items.length) return [];
+
     const counts: { [key: string]: number } = {};
-    if (!order) return [];
     order.ingredients.forEach((id) => (counts[id] = (counts[id] || 0) + 1));
+
     return Object.entries(counts)
       .map(([id, count]) => ({
         ingredient: items.find((item) => item._id === id),
@@ -40,7 +62,12 @@ export const OrderInfoDetails: FC = () => {
     }, 0);
   }, [ingredientsWithCount]);
 
-  if (feedStatus === "CONNECTING" || profileStatus === "CONNECTING") {
+  if (
+    feedStatus === "CONNECTING" ||
+    profileStatus === "CONNECTING" ||
+    ingredientsLoading ||
+    !isReady
+  ) {
     return (
       <div className={styles.details}>
         <p className="text text_type_main-medium">Загрузка...</p>
@@ -52,6 +79,14 @@ export const OrderInfoDetails: FC = () => {
     return (
       <div className={styles.details}>
         <p className="text text_type_main-medium">Заказ не найден...</p>
+      </div>
+    );
+  }
+
+  if (ingredientsWithCount.length === 0 && order.ingredients.length > 0) {
+    return (
+      <div className={styles.details}>
+        <p className="text text_type_main-medium">Загрузка состава...</p>
       </div>
     );
   }

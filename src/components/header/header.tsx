@@ -7,13 +7,16 @@ import {
 import headerStyles from "./header.module.css";
 import navStyles from "../navMenu/navItem.module.css";
 import { NavItem } from "../navMenu/navItem";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, Link } from "react-router-dom";
 
 function AppHeader() {
   const location = useLocation();
   return (
     <header className={`${headerStyles.headerContainer} p-4`}>
-      <Logo className={headerStyles.headerlogo} />
+      <Link to="/">
+        <Logo className={headerStyles.headerlogo} />
+      </Link>
+
       <nav className={`${headerStyles.headerNavMenu}`}>
         <div className={`${navStyles.navSection}`}>
           <NavLink
