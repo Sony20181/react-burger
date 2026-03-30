@@ -13,9 +13,7 @@ export const IngredientDetails: FC<IngredientDetailsProps> = ({
   ingredient: propIngredient,
 }) => {
   const { id } = useParams<{ id: string }>();
-  const { items } = useAppSelector(
-    (state) => state.ingredients as { items: IngredientType[] },
-  );
+  const { items } = useAppSelector((state) => state.ingredients);
 
   const ingredient = propIngredient || items.find((item) => item._id === id);
 

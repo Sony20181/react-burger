@@ -14,18 +14,11 @@ type IngredientProps = {
   item: IngredientType;
 };
 
-type ConstructorState = {
-  bun: IngredientType | null;
-  main: IngredientType[];
-};
-
 export const BurgerIngredient: FC<IngredientProps> = ({ item }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { bun, main } = useAppSelector(
-    (state) => state.burgerConstructor as ConstructorState,
-  );
+  const { bun, main } = useAppSelector((state) => state.burgerConstructor);
 
   // считаем кол-во ингредиентов
   let count = 0;

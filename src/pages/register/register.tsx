@@ -29,7 +29,7 @@ function RegisterPage() {
     }
     try {
       const result = await dispatch(
-        (registerUser as any)({
+        registerUser({
           email: values.email,
           password: values.password,
           name: values.name,

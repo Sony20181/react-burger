@@ -1,6 +1,16 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import { IngredientType } from "../../utils/types";
 
-const initialState = {
+type ConstructorIngredient = IngredientType & {
+  uuid: string;
+};
+
+type ConstructorState = {
+  bun: IngredientType | null;
+  main: ConstructorIngredient[];
+};
+
+const initialState: ConstructorState = {
   bun: null,
   main: [],
 };
@@ -10,15 +20,15 @@ const constructorSlice = createSlice({
   initialState,
   reducers: {
     // Добавляем булочку
-    addBun: (state, action) => {
+    addBun: (state, action: PayloadAction<IngredientType>) => {
       state.bun = action.payload;
     },
     // Добавляем ингредиент
     addIngredient: {
-      reducer: (state, action) => {
+      reducer: (state, action: PayloadAction<ConstructorIngredient>) => {
         state.main.push(action.payload);
       },
-      prepare: (ingedient) => {
+      prepare: (ingedient: IngredientType) => {
         const uuid = nanoid();
         return {
           payload: { ...ingedient, uuid },
@@ -26,11 +36,14 @@ const constructorSlice = createSlice({
       },
     },
     // Удаляем ингредиент
-    removeIngredient: (state, action) => {
+    removeIngredient: (state, action: PayloadAction<string>) => {
       state.main = state.main.filter((item) => item.uuid !== action.payload);
     },
     // Перемещаем ингредиенты
-    moveIngredient: (state, action) => {
+    moveIngredient: (
+      state,
+      action: PayloadAction<{ dragIndex: number; hoverIndex: number }>,
+    ) => {
       const { dragIndex, hoverIndex } = action.payload;
       const draggedItem = state.main[dragIndex];
       const newMain = [...state.main];

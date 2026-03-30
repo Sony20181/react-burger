@@ -1,14 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../hooks/redux";
 import styles from "./ingredient-details.module.css";
-import { IngredientType } from "../../utils/types";
 
 function IngredientDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const { items, loading } = useAppSelector(
-    (state) =>
-      state.ingredients as { items: IngredientType[]; loading: boolean },
-  );
+  const { items, loading } = useAppSelector((state) => state.ingredients);
 
   if (loading) {
     return (

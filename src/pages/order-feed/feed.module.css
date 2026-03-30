@@ -1,0 +1,11 @@
+.container {
+  max-width: 1280px;
+  min-height: 912px;
+  max-height: 912px;
+
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 40px 20px;
+}

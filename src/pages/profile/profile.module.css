@@ -67,4 +67,5 @@ h1 {
 
 .content {
   display: flex;
+  max-height: 912px;
 }
