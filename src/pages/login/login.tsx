@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useForm } from "../../hooks/useForm";
+import { Helmet } from "react-helmet-async";
 
 function LoginPage() {
   const location = useLocation();
@@ -45,57 +46,66 @@ function LoginPage() {
   };
 
   return (
-    <div className={`${styles.containerLogin} mb-6`}>
-      <h1 className={`mb-6`}>Вход</h1>
-      <form onSubmit={handleSubmit}>
-        <EmailInput
-          onChange={handleChange}
-          value={values.email}
-          name={"email"}
-          isIcon={false}
-          extraClass={`mb-6`}
+    <>
+      <Helmet>
+        <title>Вход</title>
+        <meta
+          name="description"
+          content="Войдите в свой аккаунт Stellar Burger"
         />
-        <PasswordInput
-          onChange={handleChange}
-          value={values.password}
-          name={"password"}
-          extraClass="mb-6"
-        />
-        {error && (
-          <p className="text text_type_main-default textColorError mb-4">
-            Ошибка: {error}
-          </p>
-        )}
-        <Button
-          htmlType="submit"
-          type="primary"
-          size="medium"
-          extraClass={`mb-20`}
-          disabled={loading || !values.email || !values.password}
-        >
-          Вход
-        </Button>
-      </form>
+      </Helmet>
+      <div className={`${styles.containerLogin} mb-6`}>
+        <h1 className={`mb-6`}>Вход</h1>
+        <form onSubmit={handleSubmit}>
+          <EmailInput
+            onChange={handleChange}
+            value={values.email}
+            name={"email"}
+            isIcon={false}
+            extraClass={`mb-6`}
+          />
+          <PasswordInput
+            onChange={handleChange}
+            value={values.password}
+            name={"password"}
+            extraClass="mb-6"
+          />
+          {error && (
+            <p className="text text_type_main-default textColorError mb-4">
+              Ошибка: {error}
+            </p>
+          )}
+          <Button
+            htmlType="submit"
+            type="primary"
+            size="medium"
+            extraClass={`mb-20`}
+            disabled={loading || !values.email || !values.password}
+          >
+            Вход
+          </Button>
+        </form>
 
-      <div className={`${styles.containerRegister} mb-4`}>
-        <p className={`text text_type_main-default`}>
-          Вы - новый пользователь?
-        </p>
-        <Link to="/register">
-          <p className={`${styles.text} text text_type_main-default`}>
-            Зарегестрироваться
+        <div className={`${styles.containerRegister} mb-4`}>
+          <p className={`text text_type_main-default`}>
+            Вы - новый пользователь?
           </p>
-        </Link>
+          <Link to="/register">
+            <p className={`${styles.text} text text_type_main-default`}>
+              Зарегестрироваться
+            </p>
+          </Link>
+        </div>
+        <div className={`${styles.containerForgotPassword}`}>
+          <p className={`text text_type_main-default`}>Забыли пароль?</p>
+          <Link to="/forgot-password">
+            <p className={`${styles.text} text text_type_main-default`}>
+              Восстановить пароль
+            </p>
+          </Link>
+        </div>
       </div>
-      <div className={`${styles.containerForgotPassword}`}>
-        <p className={`text text_type_main-default`}>Забыли пароль?</p>
-        <Link to="/forgot-password">
-          <p className={`${styles.text} text text_type_main-default`}>
-            Восстановить пароль
-          </p>
-        </Link>
-      </div>
-    </div>
+    </>
   );
 }
 

@@ -1,26 +1,53 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Routes, Route, useLocation } from "react-router-dom";
 import styles from "./app.module.css";
 import { fetchIngredients } from "../../services/slices/ingredientsSlice";
 import { getUser, refreshToken } from "../../services/slices/authSlice";
-
 import AppHeader from "../header/header";
-import LoginPage from "../../pages/login/login";
-import RegisterPage from "../../pages/register/register";
-import ForgotPasswordPage from "../../pages/forgot-password/forgot-password";
-import ResetPasswordPage from "../../pages/reset-password/reset-password";
-import { HomePage } from "../../pages/home/home";
-import ProfilePage from "../../pages/profile/profile";
 import { ProtectedRouteElement } from "../protected-route/protected-route";
-import IngredientDetailsPage from "../../pages/ingredient-details/ingredient-details";
-
 import { Modal } from "../modalWindow/modal";
 import { IngredientDetails } from "../modalWindow/ingredientDetails";
-import { FeedPage } from "../../pages/order-feed/feed";
-import { OrderInfoPage } from "../../pages/order-feed/order-info/order-info";
 import { OrderInfoDetails } from "../orders-feed/order-info-details/order-info-details";
-import { ProfileOrdersPage } from "../../pages/profile/components/order/profile-orders";
+
+const HomePage = lazy(() =>
+  import("../../pages/home/home").then((module) => ({
+    default: module.HomePage,
+  })),
+);
+const LoginPage = lazy(() => import("../../pages/login/login"));
+const RegisterPage = lazy(() => import("../../pages/register/register"));
+const ForgotPasswordPage = lazy(
+  () => import("../../pages/forgot-password/forgot-password"),
+);
+const ResetPasswordPage = lazy(
+  () => import("../../pages/reset-password/reset-password"),
+);
+const ProfilePage = lazy(() => import("../../pages/profile/profile"));
+const ProfileForm = lazy(
+  () => import("../../pages/profile/components/profile-form/profile-form"),
+);
+const ProfileOrdersPage = lazy(() =>
+  import("../../pages/profile/components/order/profile-orders").then(
+    (module) => ({
+      default: module.ProfileOrdersPage,
+    }),
+  ),
+);
+const IngredientDetailsPage = lazy(
+  () => import("../../pages/ingredient-details/ingredient-details"),
+);
+const FeedPage = lazy(() =>
+  import("../../pages/order-feed/feed").then((module) => ({
+    default: module.FeedPage,
+  })),
+);
+
+const OrderInfoPage = lazy(() =>
+  import("../../pages/order-feed/order-info/order-info").then((module) => ({
+    default: module.OrderInfoPage,
+  })),
+);
 
 function App() {
   const dispatch = useAppDispatch();
@@ -60,76 +87,81 @@ function App() {
     <div className={`${styles.app}`}>
       <AppHeader />
       <main>
-        <Routes location={background || location}>
-          {/* Публичные маршруты */}
-          <Route
-            path="/"
-            element={
-              <HomePage
-                isOrderModalOpen={isOrderModalOpen}
-                closeOrderModal={closeOrderModal}
-                openOrderModal={openOrderModal}
-              />
-            }
-          />
-          <Route path="/ingredients/:id" element={<IngredientDetailsPage />} />
-          <Route path="/feed" element={<FeedPage />} />
-          <Route path="/feed/:id" element={<OrderInfoPage />} />
+        <Suspense fallback={<div className={styles.loader}>Загрузка...</div>}>
+          <Routes location={background || location}>
+            {/* Публичные маршруты */}
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  isOrderModalOpen={isOrderModalOpen}
+                  closeOrderModal={closeOrderModal}
+                  openOrderModal={openOrderModal}
+                />
+              }
+            />
+            <Route
+              path="/ingredients/:id"
+              element={<IngredientDetailsPage />}
+            />
+            <Route path="/feed" element={<FeedPage />} />
+            <Route path="/feed/:id" element={<OrderInfoPage />} />
 
-          {/* Маршруты только для неавторизованных */}
-          <Route
-            path="/login"
-            element={
-              <ProtectedRouteElement anonymous={true}>
-                <LoginPage />
-              </ProtectedRouteElement>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <ProtectedRouteElement anonymous={true}>
-                <RegisterPage />
-              </ProtectedRouteElement>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <ProtectedRouteElement anonymous={true}>
-                <ForgotPasswordPage />
-              </ProtectedRouteElement>
-            }
-          />
-          <Route
-            path="/reset-password"
-            element={
-              <ProtectedRouteElement anonymous={true}>
-                <ResetPasswordPage />
-              </ProtectedRouteElement>
-            }
-          />
+            {/* Маршруты только для неавторизованных */}
+            <Route
+              path="/login"
+              element={
+                <ProtectedRouteElement anonymous={true}>
+                  <LoginPage />
+                </ProtectedRouteElement>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <ProtectedRouteElement anonymous={true}>
+                  <RegisterPage />
+                </ProtectedRouteElement>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <ProtectedRouteElement anonymous={true}>
+                  <ForgotPasswordPage />
+                </ProtectedRouteElement>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <ProtectedRouteElement anonymous={true}>
+                  <ResetPasswordPage />
+                </ProtectedRouteElement>
+              }
+            />
 
-          {/* Защищённые маршруты */}
+            {/* Защищённые маршруты */}
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRouteElement anonymous={false}>
-                <ProfilePage />
-              </ProtectedRouteElement>
-            }
-          ></Route>
-          <Route path="profile/orders" element={<ProfileOrdersPage />} />
-          <Route
-            path="profile/orders/:id"
-            element={
-              <ProtectedRouteElement anonymous={false}>
-                <OrderInfoPage />
-              </ProtectedRouteElement>
-            }
-          />
-        </Routes>
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRouteElement anonymous={false}>
+                  <ProfilePage />
+                </ProtectedRouteElement>
+              }
+            ></Route>
+            <Route path="profile/orders" element={<ProfileOrdersPage />} />
+            <Route
+              path="profile/orders/:id"
+              element={
+                <ProtectedRouteElement anonymous={false}>
+                  <OrderInfoPage />
+                </ProtectedRouteElement>
+              }
+            />
+          </Routes>
+        </Suspense>
         {/*для модального окна/ страницы ингредиентов */}
         {background && (
           <Routes>

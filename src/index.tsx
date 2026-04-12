@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./components/app/app";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./services/store";
@@ -13,13 +13,15 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <DndProvider backend={HTML5Backend}>
-      <Provider store={store}>
-        <Router>
-          <App />
-        </Router>
-      </Provider>
-    </DndProvider>
+    <HelmetProvider>
+      <DndProvider backend={HTML5Backend}>
+        <Provider store={store}>
+          <Router>
+            <App />
+          </Router>
+        </Provider>
+      </DndProvider>
+    </HelmetProvider>
   </React.StrictMode>,
 );
 

@@ -3,6 +3,7 @@ import BurgerIngredients from "../../components/burger-ingredients/burger-ingred
 import { BurgerConstructor } from "../../components/burger-constructor/burger-constructor";
 import { useAppSelector } from "../../hooks/redux";
 import { FC } from "react";
+import { Helmet } from "react-helmet-async";
 
 type HomePageProps = {
   isOrderModalOpen: boolean;
@@ -33,17 +34,27 @@ export const HomePage: FC<HomePageProps> = ({
     return <div>Продукты закончились... Приходите позже!</div>;
   }
   return (
-    <div className={`${styles.main} p-4`}>
-      <section className={`${styles.sectionBurgerIngredients}`}>
-        <BurgerIngredients />
-      </section>
-      <section className={`${styles.sectionBurgerConstructor} p-4`}>
-        <BurgerConstructor
-          isOpenModal={isOrderModalOpen}
-          closeModal={closeOrderModal}
-          openModal={openOrderModal}
+    <>
+      <Helmet>
+        <title>Соберите свой бургер</title>
+        <meta
+          name="description"
+          content="Соберите бургер из космических ингредиентов"
         />
-      </section>
-    </div>
+        <meta name="keywords" content="бургер, космос, доставка, еда" />
+      </Helmet>
+      <div className={`${styles.main} p-4`}>
+        <section className={`${styles.sectionBurgerIngredients}`}>
+          <BurgerIngredients />
+        </section>
+        <section className={`${styles.sectionBurgerConstructor} p-4`}>
+          <BurgerConstructor
+            isOpenModal={isOrderModalOpen}
+            closeModal={closeOrderModal}
+            openModal={openOrderModal}
+          />
+        </section>
+      </div>
+    </>
   );
 };
